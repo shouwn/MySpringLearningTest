@@ -20,7 +20,7 @@ public class BoardDAO {
 		this.connectionMaker = connectionMaker;
 	}
     
-    public List<Board> findAll() throws SQLException, NamingException 
+    public List<Board> findAll() throws SQLException, NamingException, ClassNotFoundException 
     {
         String sql = "SELECT * FROM board";
         try (Connection connection = connectionMaker.makeConnection();

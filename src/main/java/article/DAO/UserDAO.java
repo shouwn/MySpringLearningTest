@@ -20,7 +20,7 @@ public class UserDAO {
 		this.connectionMaker = connectionMaker;
 	}
     
-    public List<User> findAll() throws SQLException, NamingException 
+    public List<User> findAll() throws SQLException, NamingException, ClassNotFoundException 
     {
         String sql = "SELECT * FROM user";
         try (Connection connection = connectionMaker.makeConnection();

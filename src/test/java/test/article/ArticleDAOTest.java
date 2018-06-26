@@ -2,16 +2,27 @@ package test.article;
 
 import java.sql.Timestamp;
 
-import article.DAOFactory;
+import article.TestDAOFactory;
 import article.DAO.ArticleDAO;
 import article.dto.Article;
 
-public class DAOTest {
+public class ArticleDAOTest {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 		Article article = articleTestObject();
-		ArticleDAO articleDAO = new DAOFactory().articleDAO();
-		articleDAO
+		ArticleDAO articleDAO = new TestDAOFactory().articleDAO();
+		
+		articleDAO.insertInId(article);
+		
+		Article other = articleDAO.findOne(article.getId());
+		
+		System.out.println(article.equals(other));
+		
+		articleDAO.delete(article.getId());
+		
+		other = articleDAO.findOne(article.getId());
+		
+		System.out.println(other == null);
 	}
 	
 	public static Article articleTestObject() {

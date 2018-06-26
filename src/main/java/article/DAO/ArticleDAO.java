@@ -22,7 +22,7 @@ public class ArticleDAO {
 	}
 
 	public List<Article> findAll(int currentPage, int pageSize, String ss, String st, String od) 
-    throws SQLException, NamingException 
+    throws SQLException, NamingException, ClassNotFoundException 
     {
     	
         String sql = "call article_findAll(?, ?, ?, ?, ?)";
@@ -81,7 +81,10 @@ public class ArticleDAO {
 					article.setTitle(resultSet.getString("title"));
 					article.setBody(resultSet.getString("body"));
 					article.setUserId(resultSet.getInt("userId"));
+					article.setBoardId(resultSet.getInt("boardId"));
 					article.setNotice(resultSet.getBoolean("notice"));
+					article.setWriteTime(resultSet.getTimestamp("writeTime"));
+					article.setNo(resultSet.getInt("no"));
 					return article;
 				}
 			}
@@ -89,7 +92,7 @@ public class ArticleDAO {
 		}
 	}
 
-	public void update(Article article) throws SQLException, NamingException {
+	public void update(Article article) throws SQLException, NamingException, ClassNotFoundException {
 		String sql = "UPDATE article SET " +
 				"title=?, body=?, userId=?, notice=? " +
 				"WHERE id = ? ";
@@ -131,7 +134,7 @@ public class ArticleDAO {
 	
 	public void insertInId(Article article) throws Exception {
 		String sql = "INSERT article (no, title, body, userId, boardId, notice, writeTime, id)" +
-				" VALUES (?, ?, ?, ?, ?, ?, ?)";
+				" VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 		try (Connection connection = connectionMaker.makeConnection();
 				PreparedStatement statement = connection.prepareStatement(sql)) {
 			statement.setInt(1, article.getNo());

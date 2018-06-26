@@ -9,5 +9,5 @@ import javax.naming.NamingException;
 
 public interface ConnectionMaker {
 
-	Connection makeConnection() throws SQLException, NamingException;
+	Connection makeConnection() throws SQLException, NamingException, ClassNotFoundException;
 }
