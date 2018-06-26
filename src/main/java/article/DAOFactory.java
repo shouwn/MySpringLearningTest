@@ -24,29 +24,10 @@ public class DAOFactory {
 	public UserDAO userDAO() {
 		return new UserDAO(connectionMaker());
 	}
-	
-	@Bean
-	public ArticleDAO testArticleDAO() {
-		return new ArticleDAO(testConnectionMaker());
-	}
-	
-	@Bean
-	public BoardDAO testBoardDAO() {
-		return new BoardDAO(testConnectionMaker());
-	}
-	
-	@Bean
-	public UserDAO testUserDAO() {
-		return new UserDAO(testConnectionMaker());
-	}
 
 	@Bean
 	public ConnectionMaker connectionMaker() {
-		return new SimpleConnectionMaker();
-	}
-
-	@Bean
-	public ConnectionMaker testConnectionMaker() {
+		//return new SimpleConnectionMaker();
 		return new TestConnectionMaker();
 	}
 }
