@@ -138,5 +138,4 @@ public class Article {
 			return false;
 		return true;
 	}
-
 }

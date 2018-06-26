@@ -143,7 +143,7 @@ public class ArticleDAO {
 			statement.setInt(4, article.getUserId());
 			statement.setInt(5, article.getBoardId());
 			statement.setBoolean(6, article.isNotice());
-			statement.setTimestamp(7, new Timestamp(System.currentTimeMillis()));
+			statement.setTimestamp(7, (Timestamp) article.getWriteTime());
 			statement.setInt(8, article.getId());
 			statement.executeUpdate();
 		}
