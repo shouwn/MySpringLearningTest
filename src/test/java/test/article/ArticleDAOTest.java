@@ -2,6 +2,9 @@ package test.article;
 
 import java.sql.Timestamp;
 
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
 import article.TestDAOFactory;
 import article.DAO.ArticleDAO;
 import article.dto.Article;
@@ -9,8 +12,11 @@ import article.dto.Article;
 public class ArticleDAOTest {
 
 	public static void main(String[] args) throws Exception {
+		ApplicationContext context =
+				new AnnotationConfigApplicationContext(TestDAOFactory.class);
+		
+		ArticleDAO articleDAO = context.getBean("articleDAO", ArticleDAO.class);
 		Article article = articleTestObject();
-		ArticleDAO articleDAO = new TestDAOFactory().articleDAO();
 		
 		articleDAO.insertInId(article);
 		
