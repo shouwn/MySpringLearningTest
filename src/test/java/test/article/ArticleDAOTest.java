@@ -5,7 +5,7 @@ import java.sql.Timestamp;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import article.TestDAOFactory;
+import article.DAOFactory;
 import article.DAO.ArticleDAO;
 import article.dto.Article;
 
@@ -13,22 +13,22 @@ public class ArticleDAOTest {
 
 	public static void main(String[] args) throws Exception {
 		ApplicationContext context =
-				new AnnotationConfigApplicationContext(TestDAOFactory.class);
+				new AnnotationConfigApplicationContext(DAOFactory.class);
 		
-		ArticleDAO articleDAO = context.getBean("articleDAO", ArticleDAO.class);
+		ArticleDAO articleDAO = context.getBean("testArticleDAO", ArticleDAO.class);
 		Article article = articleTestObject();
 		
 		articleDAO.insertInId(article);
 		
 		Article other = articleDAO.findOne(article.getId());
 		
-		System.out.println(article.equals(other));
+		System.out.println("insert: " + (article.equals(other) ? "success" : "fail"));
 		
 		articleDAO.delete(article.getId());
 		
 		other = articleDAO.findOne(article.getId());
 		
-		System.out.println(other == null);
+		System.out.println("delete: " + (other == null ? "success" : "fail"));
 	}
 	
 	public static Article articleTestObject() {
