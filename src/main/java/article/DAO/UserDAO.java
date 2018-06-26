@@ -16,11 +16,11 @@ public class UserDAO {
 	
 	private ConnectionMaker connectionMaker;
 
-    public UserDAO(ConnectionMaker connectionMaker) {
+    public void setConnectionMaker(ConnectionMaker connectionMaker) {
 		this.connectionMaker = connectionMaker;
 	}
     
-    public List<User> findAll() throws SQLException, NamingException, ClassNotFoundException 
+	public List<User> findAll() throws SQLException, NamingException, ClassNotFoundException 
     {
         String sql = "SELECT * FROM user";
         try (Connection connection = connectionMaker.makeConnection();

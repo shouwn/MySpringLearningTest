@@ -16,8 +16,8 @@ import article.dto.Article;
 public class ArticleDAO {
 	
 	private ConnectionMaker connectionMaker;
-	
-    public ArticleDAO(ConnectionMaker connectionMaker) {
+
+	public void setConnectionMaker(ConnectionMaker connectionMaker) {
 		this.connectionMaker = connectionMaker;
 	}
 

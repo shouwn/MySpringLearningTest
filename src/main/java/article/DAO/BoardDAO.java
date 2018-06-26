@@ -15,12 +15,12 @@ import article.dto.Board;
 public class BoardDAO {
 
 	private ConnectionMaker connectionMaker;
-
-    public BoardDAO(ConnectionMaker connectionMaker) {
+    
+    public void setConnectionMaker(ConnectionMaker connectionMaker) {
 		this.connectionMaker = connectionMaker;
 	}
-    
-    public List<Board> findAll() throws SQLException, NamingException, ClassNotFoundException 
+
+	public List<Board> findAll() throws SQLException, NamingException, ClassNotFoundException 
     {
         String sql = "SELECT * FROM board";
         try (Connection connection = connectionMaker.makeConnection();

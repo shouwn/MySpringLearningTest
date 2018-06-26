@@ -12,17 +12,23 @@ public class DAOFactory {
 
 	@Bean
 	public ArticleDAO articleDAO() {
-		return new ArticleDAO(connectionMaker());
+		ArticleDAO articleDAO = new ArticleDAO();
+		articleDAO.setConnectionMaker(connectionMaker());
+		return articleDAO;
 	}
 	
 	@Bean
 	public BoardDAO boardDAO() {
-		return new BoardDAO(connectionMaker());
+		BoardDAO boardDAO = new BoardDAO();
+		boardDAO.setConnectionMaker(connectionMaker());
+		return boardDAO;
 	}
 	
 	@Bean
 	public UserDAO userDAO() {
-		return new UserDAO(connectionMaker());
+		UserDAO userDAO = new UserDAO();
+		userDAO.setConnectionMaker(connectionMaker());
+		return userDAO;
 	}
 
 	@Bean

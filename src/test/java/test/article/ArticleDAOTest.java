@@ -15,7 +15,7 @@ public class ArticleDAOTest {
 		ApplicationContext context =
 				new AnnotationConfigApplicationContext(DAOFactory.class);
 		
-		ArticleDAO articleDAO = context.getBean("testArticleDAO", ArticleDAO.class);
+		ArticleDAO articleDAO = context.getBean("articleDAO", ArticleDAO.class);
 		Article article = articleTestObject();
 		
 		articleDAO.insertInId(article);
