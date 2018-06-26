@@ -1,4 +1,4 @@
-package semiFinal;
+package article.dto;
 
 public class Board {
 	int id;

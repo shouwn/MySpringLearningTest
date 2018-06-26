@@ -9,6 +9,8 @@ import java.util.List;
 
 import javax.naming.NamingException;
 
+import article.dto.Board;
+
 public class BoardDAO {
     public static List<Board> findAll() throws SQLException, NamingException 
     {

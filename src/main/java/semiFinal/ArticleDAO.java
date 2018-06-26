@@ -10,6 +10,8 @@ import java.util.List;
 
 import javax.naming.NamingException;
 
+import article.dto.Article;
+
 public class ArticleDAO {
 	
     public static List<Article> findAll(int currentPage, int pageSize, String ss, String st, String od) 

@@ -1,4 +1,4 @@
-package semiFinal;
+package article.dto;
 
 import java.util.Date;
 

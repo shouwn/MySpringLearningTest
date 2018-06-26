@@ -9,6 +9,8 @@ import java.util.List;
 
 import javax.naming.NamingException;
 
+import article.dto.User;
+
 public class UserDAO {
     public static List<User> findAll() throws SQLException, NamingException 
     {
