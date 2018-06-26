@@ -1,4 +1,4 @@
-package semiFinal;
+package article.DAO;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -10,15 +10,23 @@ import java.util.List;
 
 import javax.naming.NamingException;
 
+import article.ConnectionMaker;
 import article.dto.Article;
 
 public class ArticleDAO {
 	
-    public static List<Article> findAll(int currentPage, int pageSize, String ss, String st, String od) 
+	private ConnectionMaker connectionMaker;
+	
+    public ArticleDAO(ConnectionMaker connectionMaker) {
+		this.connectionMaker = connectionMaker;
+	}
+
+	public List<Article> findAll(int currentPage, int pageSize, String ss, String st, String od) 
     throws SQLException, NamingException 
     {
+    	
         String sql = "call article_findAll(?, ?, ?, ?, ?)";
-        try (Connection connection = DB.getConnection("bbs2");
+        try (Connection connection = connectionMaker.makeConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setInt(1, (currentPage - 1) * pageSize); // firstRecordIndex
             statement.setInt(2, pageSize);                     // pageSize
@@ -45,9 +53,9 @@ public class ArticleDAO {
         }
     }
 
-	public static int count(String ss, String st) throws Exception {
+	public int count(String ss, String st) throws Exception {
 		String sql = "CALL article_count(?, ?)";
-		try (Connection connection = DB.getConnection("bbs2");
+		try (Connection connection = connectionMaker.makeConnection();
 				PreparedStatement statement = connection.prepareStatement(sql)) {
 			statement.setString(1, ss);
             if("2".equals(ss))
@@ -61,9 +69,9 @@ public class ArticleDAO {
 		}
 		return 0;
 	}
-	public static Article findOne(int id) throws Exception {
+	public Article findOne(int id) throws Exception {
 		String sql = "SELECT * FROM article WHERE id=?";
-		try (Connection connection = DB.getConnection("bbs2");
+		try (Connection connection = connectionMaker.makeConnection();
 				PreparedStatement statement = connection.prepareStatement(sql)) {
 			statement.setInt(1, id);
 			try (ResultSet resultSet = statement.executeQuery()) {
@@ -81,11 +89,11 @@ public class ArticleDAO {
 		}
 	}
 
-	public static void update(Article article) throws SQLException, NamingException {
+	public void update(Article article) throws SQLException, NamingException {
 		String sql = "UPDATE article SET " +
 				"title=?, body=?, userId=?, notice=? " +
 				"WHERE id = ? ";
-		try (Connection connection = DB.getConnection("bbs2");
+		try (Connection connection = connectionMaker.makeConnection();
 				PreparedStatement statement = connection.prepareStatement(sql)) {
 			statement.setString(1, article.getTitle());
 			statement.setString(2, article.getBody());
@@ -96,19 +104,19 @@ public class ArticleDAO {
 		}
 	}
 
-	public static void delete(int id) throws Exception {
+	public void delete(int id) throws Exception {
 		String sql = "DELETE FROM article WHERE id = ?";
-		try (Connection connection = DB.getConnection("bbs2");
+		try (Connection connection = connectionMaker.makeConnection();
 				PreparedStatement statement = connection.prepareStatement(sql)) {
 			statement.setInt(1, id);
 			statement.executeUpdate();
 		}
 	}
 	
-	public static void insert(Article article) throws Exception {
+	public void insert(Article article) throws Exception {
 		String sql = "INSERT article (no, title, body, userId, boardId, notice, writeTime)" +
 				" VALUES (?, ?, ?, ?, ?, ?, ?)";
-		try (Connection connection = DB.getConnection("bbs2");
+		try (Connection connection = connectionMaker.makeConnection();
 				PreparedStatement statement = connection.prepareStatement(sql)) {
 			statement.setInt(1, article.getNo());
 			statement.setString(2, article.getTitle());
@@ -117,6 +125,23 @@ public class ArticleDAO {
 			statement.setInt(5, article.getBoardId());
 			statement.setBoolean(6, article.isNotice());
 			statement.setTimestamp(7, new Timestamp(System.currentTimeMillis()));
+			statement.executeUpdate();
+		}
+	}
+	
+	public void insertInId(Article article) throws Exception {
+		String sql = "INSERT article (no, title, body, userId, boardId, notice, writeTime, id)" +
+				" VALUES (?, ?, ?, ?, ?, ?, ?)";
+		try (Connection connection = connectionMaker.makeConnection();
+				PreparedStatement statement = connection.prepareStatement(sql)) {
+			statement.setInt(1, article.getNo());
+			statement.setString(2, article.getTitle());
+			statement.setString(3, article.getBody());
+			statement.setInt(4, article.getUserId());
+			statement.setInt(5, article.getBoardId());
+			statement.setBoolean(6, article.isNotice());
+			statement.setTimestamp(7, new Timestamp(System.currentTimeMillis()));
+			statement.setInt(8, article.getId());
 			statement.executeUpdate();
 		}
 	}

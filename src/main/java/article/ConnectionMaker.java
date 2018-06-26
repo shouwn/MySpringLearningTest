@@ -1,10 +1,11 @@
 package article;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 
 import javax.naming.NamingException;
 
-import com.mysql.jdbc.Connection;
+
 
 public interface ConnectionMaker {
 

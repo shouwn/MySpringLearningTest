@@ -1,4 +1,4 @@
-package semiFinal;
+package article.DAO;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -9,13 +9,21 @@ import java.util.List;
 
 import javax.naming.NamingException;
 
+import article.ConnectionMaker;
 import article.dto.User;
 
 public class UserDAO {
-    public static List<User> findAll() throws SQLException, NamingException 
+	
+	private ConnectionMaker connectionMaker;
+
+    public UserDAO(ConnectionMaker connectionMaker) {
+		this.connectionMaker = connectionMaker;
+	}
+    
+    public List<User> findAll() throws SQLException, NamingException 
     {
         String sql = "SELECT * FROM user";
-        try (Connection connection = DB.getConnection("bbs2");
+        try (Connection connection = connectionMaker.makeConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
             try (ResultSet resultSet = statement.executeQuery()) {
                 ArrayList<User> list = new ArrayList<User>();
