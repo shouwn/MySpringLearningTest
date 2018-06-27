@@ -2,6 +2,7 @@ package article;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
 import article.DAO.ArticleDAO;
 import article.DAO.BoardDAO;
@@ -33,7 +34,11 @@ public class DAOFactory {
 
 	@Bean
 	public ConnectionMaker connectionMaker() {
-		//return new SimpleConnectionMaker();
+		
+		SimpleDriverDataSource dataSource = new SimpleDriverDataSource();
+		dataSource.setDriverClass(com.mysql.jdbc.Driver.class);
+		dataSource.setUrl("jdbc:mysql://loacalhost/bbs2");
+		
 		return new TestConnectionMaker();
 	}
 }

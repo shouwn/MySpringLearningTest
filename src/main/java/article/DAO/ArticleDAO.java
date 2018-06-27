@@ -9,16 +9,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.naming.NamingException;
+import javax.sql.DataSource;
 
-import article.ConnectionMaker;
 import article.dto.Article;
 
 public class ArticleDAO {
 	
-	private ConnectionMaker connectionMaker;
+	private DataSource dataSource;
 
-	public void setConnectionMaker(ConnectionMaker connectionMaker) {
-		this.connectionMaker = connectionMaker;
+	public void setDataSource(DataSource dataSource) {
+		this.dataSource = dataSource;
 	}
 
 	public List<Article> findAll(int currentPage, int pageSize, String ss, String st, String od) 
@@ -26,7 +26,7 @@ public class ArticleDAO {
     {
     	
         String sql = "call article_findAll(?, ?, ?, ?, ?)";
-        try (Connection connection = connectionMaker.makeConnection();
+        try (Connection connection = dataSource.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setInt(1, (currentPage - 1) * pageSize); // firstRecordIndex
             statement.setInt(2, pageSize);                     // pageSize
@@ -55,7 +55,7 @@ public class ArticleDAO {
 
 	public int count(String ss, String st) throws Exception {
 		String sql = "CALL article_count(?, ?)";
-		try (Connection connection = connectionMaker.makeConnection();
+		try (Connection connection = dataSource.getConnection();
 				PreparedStatement statement = connection.prepareStatement(sql)) {
 			statement.setString(1, ss);
             if("2".equals(ss))
@@ -71,7 +71,7 @@ public class ArticleDAO {
 	}
 	public Article findOne(int id) throws Exception {
 		String sql = "SELECT * FROM article WHERE id=?";
-		try (Connection connection = connectionMaker.makeConnection();
+		try (Connection connection = dataSource.getConnection();
 				PreparedStatement statement = connection.prepareStatement(sql)) {
 			statement.setInt(1, id);
 			try (ResultSet resultSet = statement.executeQuery()) {
@@ -96,7 +96,7 @@ public class ArticleDAO {
 		String sql = "UPDATE article SET " +
 				"title=?, body=?, userId=?, notice=? " +
 				"WHERE id = ? ";
-		try (Connection connection = connectionMaker.makeConnection();
+		try (Connection connection = dataSource.getConnection();
 				PreparedStatement statement = connection.prepareStatement(sql)) {
 			statement.setString(1, article.getTitle());
 			statement.setString(2, article.getBody());
@@ -109,7 +109,7 @@ public class ArticleDAO {
 
 	public void delete(int id) throws Exception {
 		String sql = "DELETE FROM article WHERE id = ?";
-		try (Connection connection = connectionMaker.makeConnection();
+		try (Connection connection = dataSource.getConnection();
 				PreparedStatement statement = connection.prepareStatement(sql)) {
 			statement.setInt(1, id);
 			statement.executeUpdate();
@@ -119,7 +119,7 @@ public class ArticleDAO {
 	public void insert(Article article) throws Exception {
 		String sql = "INSERT article (no, title, body, userId, boardId, notice, writeTime)" +
 				" VALUES (?, ?, ?, ?, ?, ?, ?)";
-		try (Connection connection = connectionMaker.makeConnection();
+		try (Connection connection = dataSource.getConnection();
 				PreparedStatement statement = connection.prepareStatement(sql)) {
 			statement.setInt(1, article.getNo());
 			statement.setString(2, article.getTitle());
@@ -135,7 +135,7 @@ public class ArticleDAO {
 	public void insertInId(Article article) throws Exception {
 		String sql = "INSERT article (no, title, body, userId, boardId, notice, writeTime, id)" +
 				" VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-		try (Connection connection = connectionMaker.makeConnection();
+		try (Connection connection = dataSource.getConnection();
 				PreparedStatement statement = connection.prepareStatement(sql)) {
 			statement.setInt(1, article.getNo());
 			statement.setString(2, article.getTitle());

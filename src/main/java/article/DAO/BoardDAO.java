@@ -8,22 +8,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.naming.NamingException;
+import javax.sql.DataSource;
 
-import article.ConnectionMaker;
 import article.dto.Board;
 
 public class BoardDAO {
 
-	private ConnectionMaker connectionMaker;
-    
-    public void setConnectionMaker(ConnectionMaker connectionMaker) {
-		this.connectionMaker = connectionMaker;
+	private DataSource dataSource;
+
+	public void setDataSource(DataSource dataSource) {
+		this.dataSource = dataSource;
 	}
 
 	public List<Board> findAll() throws SQLException, NamingException, ClassNotFoundException 
     {
         String sql = "SELECT * FROM board";
-        try (Connection connection = connectionMaker.makeConnection();
+        try (Connection connection = dataSource.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
             try (ResultSet resultSet = statement.executeQuery()) {
                 ArrayList<Board> list = new ArrayList<Board>();
