@@ -2,6 +2,8 @@ package test.article;
 
 import java.sql.Timestamp;
 
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -13,53 +15,47 @@ import article.dto.Article;
 
 public class ArticleDAOTest {
 
-	public static void main(String[] args) throws Exception {
-		annotationConfigTest();
-		xmlConfigTest();
-	}
-	
-	public static void annotationConfigTest() throws Exception {
+	@Test
+	public void annotationConfigAddAndGet() throws Exception {
 
 		ApplicationContext context =
 				new AnnotationConfigApplicationContext(DAOFactory.class);
-		
+
 		ArticleDAO articleDAO = context.getBean("articleDAO", ArticleDAO.class);
 		Article article = articleTestObject();
-		
-		articleDAO.insertInId(article);
-		
-		Article other = articleDAO.findOne(article.getId());
-		
-		System.out.println("insert: " + (article.equals(other) ? "success" : "fail"));
-		
+
 		articleDAO.delete(article.getId());
 		
-		other = articleDAO.findOne(article.getId());
+		Assertions.assertEquals(0, articleDAO.count());
 		
-		System.out.println("delete: " + (other == null ? "success" : "fail"));
+		articleDAO.insertIncludeId(article);
+		Article other = articleDAO.findOne(article.getId());
+		
+		Assertions.assertEquals(article, other);
+		Assertions.assertEquals(1, articleDAO.count());
 	}
-	
+
 	public static void xmlConfigTest() throws Exception {
 
 		ApplicationContext context =
 				new ClassPathXmlApplicationContext("applicationContext.xml", TestConnectionMaker.class);
-		
+
 		ArticleDAO articleDAO = context.getBean("articleDAO", ArticleDAO.class);
 		Article article = articleTestObject();
-		
-		articleDAO.insertInId(article);
-		
+
+		articleDAO.insertIncludeId(article);
+
 		Article other = articleDAO.findOne(article.getId());
-		
+
 		System.out.println("insert: " + (article.equals(other) ? "success" : "fail"));
-		
+
 		articleDAO.delete(article.getId());
-		
+
 		other = articleDAO.findOne(article.getId());
-		
+
 		System.out.println("delete: " + (other == null ? "success" : "fail"));
 	}
-	
+
 	public static Article articleTestObject() {
 		Article article = new Article();
 		article.setId(215);

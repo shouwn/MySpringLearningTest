@@ -69,6 +69,19 @@ public class ArticleDAO {
 		}
 		return 0;
 	}
+	
+	public int count() throws Exception{
+		String sql = "SELECT COUNT(*) FROM article";
+		try (Connection connection = dataSource.getConnection();
+				PreparedStatement statement = connection.prepareStatement(sql)) {
+			try (ResultSet resultSet = statement.executeQuery()) {
+				if (resultSet.next())
+					return resultSet.getInt(1);
+			}
+		}
+		return 0;
+	}
+	
 	public Article findOne(int id) throws Exception {
 		String sql = "SELECT * FROM article WHERE id=?";
 		try (Connection connection = dataSource.getConnection();
@@ -132,7 +145,7 @@ public class ArticleDAO {
 		}
 	}
 	
-	public void insertInId(Article article) throws Exception {
+	public void insertIncludeId(Article article) throws Exception {
 		String sql = "INSERT article (no, title, body, userId, boardId, notice, writeTime, id)" +
 				" VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 		try (Connection connection = dataSource.getConnection();

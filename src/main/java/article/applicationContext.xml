@@ -9,5 +9,4 @@
 		<property name="dataSource" ref="testDataSource" />
 	</bean>
 
-
 </beans>
