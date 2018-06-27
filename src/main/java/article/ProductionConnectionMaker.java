@@ -7,7 +7,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 
-public class SimpleConnectionMaker implements ConnectionMaker{
+public class ProductionConnectionMaker implements ConnectionMaker{
 
 	@Override
 	public Connection makeConnection() throws SQLException, NamingException {
