@@ -11,6 +11,8 @@ import java.util.List;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 
+import org.springframework.dao.EmptyResultDataAccessException;
+
 import article.dto.Article;
 
 public class ArticleDAO {
@@ -88,8 +90,9 @@ public class ArticleDAO {
 				PreparedStatement statement = connection.prepareStatement(sql)) {
 			statement.setInt(1, id);
 			try (ResultSet resultSet = statement.executeQuery()) {
+				Article article = null;
 				if (resultSet.next()) {
-                	Article article = new Article();
+                	article = new Article();
 					article.setId(resultSet.getInt("id"));
 					article.setTitle(resultSet.getString("title"));
 					article.setBody(resultSet.getString("body"));
@@ -100,6 +103,8 @@ public class ArticleDAO {
 					article.setNo(resultSet.getInt("no"));
 					return article;
 				}
+				
+				if(article == null) throw new EmptyResultDataAccessException(1);
 			}
 			return null;
 		}
