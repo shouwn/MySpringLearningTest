@@ -39,9 +39,17 @@ public class ArticleDAOTest {
 		Assertions.assertEquals(article2, articleDAO.findOne(article2.getId()));
 	}
 	
-	@Test(expected=EmptyResultDataAccessException.class)
-	public void getUserFilure() {
+	@Test
+	public void getArticleFilure() throws Exception {
+
+		ApplicationContext context =
+				//new AnnotationConfigApplicationContext(DAOFactory.class);
+				new ClassPathXmlApplicationContext("applicationContext.xml", TestConnectionMaker.class);
 		
+		ArticleDAO articleDAO = context.getBean("articleDAO", ArticleDAO.class);
+		articleDAO.delete(1000000);
+		
+		Assertions.assertThrows(EmptyResultDataAccessException.class, () -> articleDAO.findOne(1000000));
 	}
 	
 	@Test
