@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.dao.EmptyResultDataAccessException;
 
 import article.TestConnectionMaker;
 import article.DAO.ArticleDAO;
@@ -36,6 +37,11 @@ public class ArticleDAOTest {
 		Assertions.assertEquals(count, articleDAO.count());
 		Assertions.assertEquals(article1, articleDAO.findOne(article1.getId()));
 		Assertions.assertEquals(article2, articleDAO.findOne(article2.getId()));
+	}
+	
+	@Test(expected=EmptyResultDataAccessException.class)
+	public void getUserFilure() {
+		
 	}
 	
 	@Test

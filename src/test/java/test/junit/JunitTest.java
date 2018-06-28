@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
 
 public class JunitTest {
 	@Test
@@ -14,5 +15,19 @@ public class JunitTest {
 	@Test
 	public void assertNotEqualsTest() {
 		assertNotEquals(new Integer(19), 20);
+	}
+	
+	@Test
+	public void assertThrowsTest() {
+		Assertions.assertThrows(IllegalArgumentException.class, () -> Integer.valueOf("!"));
+	}
+	
+	@Test
+	public void assertThrowsTestWithMethod() {
+		Assertions.assertThrows(ArrayIndexOutOfBoundsException.class, () -> JunitTest.assertThrowsTestMethod());
+	}
+	
+	public static void assertThrowsTestMethod() {
+		throw new ArrayIndexOutOfBoundsException();
 	}
 }
