@@ -6,33 +6,34 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class JunitTest {
 	
 	private static final List<JunitTest> beforeEachList = new ArrayList<>();
 	private static JunitTest beforeAllTest;
-	private static int newingCount = 0;
 	private static int beforeAllCount = 0;
+	private static int beforeEachCount = 0;
 	
 	@BeforeAll
 	public static void beforeAllTest() {
+		beforeAllCount++;
 		beforeAllTest = new JunitTest();
-		beforeAllCount += 1;
 	}
 	
 	@BeforeEach
 	public void beforeEachTest() {
 		beforeEachList.add(this);
-		newingCount++;
+		beforeEachCount++;
 	}
 
 	@Test
 	public void beforeEachTestContext() {
-		Assertions.assertNotEquals(0, beforeEachList.size());
+		Assertions.assertNotEquals(0, beforeEachCount);
+		Assertions.assertEquals(beforeEachCount, beforeEachList.size());
 		Assertions.assertFalse(() -> {
 			
 			int i = 1;
@@ -43,7 +44,7 @@ public class JunitTest {
 			}
 			return false;
 		});
-	}	
+	}
 	
 	@Test
 	public void beforeAllTestContext() {
