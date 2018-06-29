@@ -3,21 +3,28 @@ package test.article;
 import java.sql.Timestamp;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.GenericXmlApplicationContext;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import article.DAO.ArticleDAO;
 import article.dto.Article;
 
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration("/applicationContext.xml")
 public class ArticleDAOTest {
 	
 	private ArticleDAO articleDAO;
-	private static ApplicationContext context;
 	
+	@Autowired
+	private ApplicationContext context;
+	
+	/*
 	@BeforeAll
 	public static void init() {
 		context =
@@ -26,6 +33,7 @@ public class ArticleDAOTest {
 				new GenericXmlApplicationContext("applicationContext.xml");
 				// 클래스 패스의 시작은 src/main/java
 	}
+	*/
 	
 	@BeforeEach
 	public void setUp() {
