@@ -24,10 +24,10 @@ public class JunitTest {
 	
 	@Test
 	public void assertThrowsTestWithMethod() {
-		Assertions.assertThrows(ArrayIndexOutOfBoundsException.class, () -> JunitTest.assertThrowsTestMethod());
+		Assertions.assertThrows(ArrayIndexOutOfBoundsException.class, () -> assertThrowsTestMethod());
 	}
 	
-	public static void assertThrowsTestMethod() {
+	public void assertThrowsTestMethod() {
 		throw new ArrayIndexOutOfBoundsException();
 	}
 }
