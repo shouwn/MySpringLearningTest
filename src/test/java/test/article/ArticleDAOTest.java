@@ -17,6 +17,7 @@ import article.dto.Article;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration("/applicationContext.xml")
+// 하나의 어플리케이션 컨텍스트 만들기 + 스프링 확장 기능 사용
 public class ArticleDAOTest {
 	
 	private ArticleDAO articleDAO;
