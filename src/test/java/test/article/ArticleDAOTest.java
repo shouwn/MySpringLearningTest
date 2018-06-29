@@ -3,6 +3,7 @@ package test.article;
 import java.sql.Timestamp;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -13,15 +14,21 @@ import article.DAO.ArticleDAO;
 import article.dto.Article;
 
 public class ArticleDAOTest {
+	
+	private ArticleDAO articleDAO;
+	
+	@BeforeEach
+	public void init() {
+		ApplicationContext context =
+				//new AnnotationConfigApplicationContext(DAOFactory.class);
+				new ClassPathXmlApplicationContext("applicationContext.xml", TestConnectionMaker.class);
+		
+		this.articleDAO = context.getBean("articleDAO", ArticleDAO.class);
+	}
 
 	@Test
 	public void addAndGet() throws Exception {
 
-		ApplicationContext context =
-				//new AnnotationConfigApplicationContext(DAOFactory.class);
-				new ClassPathXmlApplicationContext("applicationContext.xml", TestConnectionMaker.class);
-
-		ArticleDAO articleDAO = context.getBean("articleDAO", ArticleDAO.class);
 		Article article1 = articleTestObject(215);
 		Article article2 = articleTestObject(216);
 		
@@ -41,12 +48,7 @@ public class ArticleDAOTest {
 	
 	@Test
 	public void getArticleFilure() throws Exception {
-
-		ApplicationContext context =
-				//new AnnotationConfigApplicationContext(DAOFactory.class);
-				new ClassPathXmlApplicationContext("applicationContext.xml", TestConnectionMaker.class);
 		
-		ArticleDAO articleDAO = context.getBean("articleDAO", ArticleDAO.class);
 		articleDAO.delete(1000000);
 		
 		Assertions.assertThrows(EmptyResultDataAccessException.class, () -> articleDAO.findOne(1000000));
@@ -54,11 +56,6 @@ public class ArticleDAOTest {
 	
 	@Test
 	public void count() throws Exception {
-		ApplicationContext context =
-				//new AnnotationConfigApplicationContext(DAOFactory.class);
-				new ClassPathXmlApplicationContext("applicationContext.xml", TestConnectionMaker.class);
-
-		ArticleDAO articleDAO = context.getBean("articleDAO", ArticleDAO.class);
 		
 		int[] index = new int[] {0, 1, 2};
 		Article[] articles = new Article[3];
