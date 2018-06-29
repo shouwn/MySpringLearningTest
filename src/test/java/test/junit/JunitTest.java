@@ -11,17 +11,17 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class JunitTest {
+public class JUnitTest {
 	
-	private static final List<JunitTest> beforeEachList = new ArrayList<>();
-	private static JunitTest beforeAllTest;
+	private static final List<JUnitTest> beforeEachList = new ArrayList<>();
+	private static JUnitTest beforeAllTest;
 	private static int beforeAllCount = 0;
 	private static int beforeEachCount = 0;
 	
 	@BeforeAll
 	public static void beforeAllTest() {
 		beforeAllCount++;
-		beforeAllTest = new JunitTest();
+		beforeAllTest = new JUnitTest();
 	}
 	
 	@BeforeEach
@@ -37,8 +37,8 @@ public class JunitTest {
 		Assertions.assertFalse(() -> {
 			
 			int i = 1;
-			for(JunitTest t1 : beforeEachList) {
-				for(JunitTest t2 : beforeEachList.subList(i++, beforeEachList.size()))
+			for(JUnitTest t1 : beforeEachList) {
+				for(JUnitTest t2 : beforeEachList.subList(i++, beforeEachList.size()))
 					if(t1 == t2)
 						return true;
 			}
