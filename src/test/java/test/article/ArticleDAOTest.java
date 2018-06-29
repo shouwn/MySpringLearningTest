@@ -3,26 +3,37 @@ package test.article;
 import java.sql.Timestamp;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.support.GenericXmlApplicationContext;
 import org.springframework.dao.EmptyResultDataAccessException;
 
-import article.TestConnectionMaker;
 import article.DAO.ArticleDAO;
 import article.dto.Article;
 
 public class ArticleDAOTest {
 	
 	private ArticleDAO articleDAO;
+	private static ApplicationContext context;
+	
+	@BeforeAll
+	public static void init() {
+		context =
+				//new AnnotationConfigApplicationContext(DAOFactory.class);
+				//new ClassPathXmlApplicationContext("applicationContext.xml", TestConnectionMaker.class); 예전 버전
+				new GenericXmlApplicationContext("applicationContext.xml");
+				// 클래스 패스의 시작은 src/main/java
+	}
 	
 	@BeforeEach
-	public void init() {
+	public void setUp() {
+		/*
 		ApplicationContext context =
 				//new AnnotationConfigApplicationContext(DAOFactory.class);
 				new ClassPathXmlApplicationContext("applicationContext.xml", TestConnectionMaker.class);
-		
+		*/
 		this.articleDAO = context.getBean("articleDAO", ArticleDAO.class);
 	}
 
