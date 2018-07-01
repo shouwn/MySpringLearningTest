@@ -166,4 +166,13 @@ public class ArticleDAO {
 			statement.executeUpdate();
 		}
 	}
+	
+	public void jdbContextWithStatementsStrategy(StatementStrategy stmt) throws SQLException {
+
+		try (Connection c = dataSource.getConnection();
+				PreparedStatement statement = stmt.makePreparedStatement(c)) {
+
+			statement.executeUpdate();
+		}
+	}
 }
