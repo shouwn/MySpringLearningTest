@@ -16,7 +16,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import article.dto.Article;
 
 public class ArticleDAO {
-	
+
 	private DataSource dataSource;
 
 	public void setDataSource(DataSource dataSource) {
@@ -24,46 +24,46 @@ public class ArticleDAO {
 	}
 
 	public List<Article> findAll(int currentPage, int pageSize, String ss, String st, String od) 
-    throws SQLException, NamingException, ClassNotFoundException 
-    {
-    	
-        String sql = "call article_findAll(?, ?, ?, ?, ?)";
-        try (Connection connection = dataSource.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setInt(1, (currentPage - 1) * pageSize); // firstRecordIndex
-            statement.setInt(2, pageSize);                     // pageSize
-            statement.setString(3, ss);                        // 조회 방법
-            if("2".equals(ss))
-            	statement.setString(4, "%" + st + "%");
-            else
-            	statement.setString(4, st + "%");
-            statement.setString(5, od);                        // 정렬 순서
-            try (ResultSet resultSet = statement.executeQuery()) {
-                ArrayList<Article> list = new ArrayList<Article>();
-                while (resultSet.next()) {
-                	Article article = new Article();
+			throws SQLException, NamingException, ClassNotFoundException 
+	{
+
+		String sql = "call article_findAll(?, ?, ?, ?, ?)";
+		try (Connection connection = dataSource.getConnection();
+				PreparedStatement statement = connection.prepareStatement(sql)) {
+			statement.setInt(1, (currentPage - 1) * pageSize); // firstRecordIndex
+			statement.setInt(2, pageSize);                     // pageSize
+			statement.setString(3, ss);                        // 조회 방법
+			if("2".equals(ss))
+				statement.setString(4, "%" + st + "%");
+			else
+				statement.setString(4, st + "%");
+			statement.setString(5, od);                        // 정렬 순서
+			try (ResultSet resultSet = statement.executeQuery()) {
+				ArrayList<Article> list = new ArrayList<Article>();
+				while (resultSet.next()) {
+					Article article = new Article();
 					article.setId(resultSet.getInt("id"));
 					article.setNo(resultSet.getInt("no"));
 					article.setUserName(resultSet.getString("name"));
 					article.setBoardName(resultSet.getString("boardName"));
 					article.setWriteTime(resultSet.getTimestamp("writeTime"));
 					article.setTitle(resultSet.getString("title"));
-                	list.add(article);
-                }
-                return list;
-            }
-        }
-    }
+					list.add(article);
+				}
+				return list;
+			}
+		}
+	}
 
 	public int count(String ss, String st) throws Exception {
 		String sql = "CALL article_count(?, ?)";
 		try (Connection connection = dataSource.getConnection();
 				PreparedStatement statement = connection.prepareStatement(sql)) {
 			statement.setString(1, ss);
-            if("2".equals(ss))
-            	statement.setString(2, "%" + st + "%");
-            else
-            	statement.setString(2, st + "%");
+			if("2".equals(ss))
+				statement.setString(2, "%" + st + "%");
+			else
+				statement.setString(2, st + "%");
 			try (ResultSet resultSet = statement.executeQuery()) {
 				if (resultSet.next())
 					return resultSet.getInt(1);
@@ -71,7 +71,7 @@ public class ArticleDAO {
 		}
 		return 0;
 	}
-	
+
 	public int count() throws Exception{
 		String sql = "SELECT COUNT(*) FROM article";
 		try (Connection connection = dataSource.getConnection();
@@ -83,7 +83,7 @@ public class ArticleDAO {
 		}
 		return 0;
 	}
-	
+
 	public Article findOne(int id) throws Exception {
 		String sql = "SELECT * FROM article WHERE id=?";
 		try (Connection connection = dataSource.getConnection();
@@ -92,7 +92,7 @@ public class ArticleDAO {
 			try (ResultSet resultSet = statement.executeQuery()) {
 				Article article = null;
 				if (resultSet.next()) {
-                	article = new Article();
+					article = new Article();
 					article.setId(resultSet.getInt("id"));
 					article.setTitle(resultSet.getString("title"));
 					article.setBody(resultSet.getString("body"));
@@ -103,7 +103,7 @@ public class ArticleDAO {
 					article.setNo(resultSet.getInt("no"));
 					return article;
 				}
-				
+
 				if(article == null) throw new EmptyResultDataAccessException(1);
 			}
 			return null;
@@ -133,7 +133,7 @@ public class ArticleDAO {
 			statement.executeUpdate();
 		}
 	}
-	
+
 	public void insert(Article article) throws Exception {
 		String sql = "INSERT article (no, title, body, userId, boardId, notice, writeTime)" +
 				" VALUES (?, ?, ?, ?, ?, ?, ?)";
@@ -149,12 +149,29 @@ public class ArticleDAO {
 			statement.executeUpdate();
 		}
 	}
-	
-	public void insertIncludeId(Article article) throws Exception {
-		StatementStrategy stmt = new InsertIncludeIdStatement(article);
+
+	public void insertIncludeId(final Article article) throws Exception {
+		StatementStrategy stmt = (c) -> {
+			String sql = "INSERT article (no, title, body, userId, boardId, notice, writeTime, id)" +
+					" VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+
+			PreparedStatement statement = c.prepareStatement(sql);
+
+			statement.setInt(1, article.getNo());
+			statement.setString(2, article.getTitle());
+			statement.setString(3, article.getBody());
+			statement.setInt(4, article.getUserId());
+			statement.setInt(5, article.getBoardId());
+			statement.setBoolean(6, article.isNotice());
+			statement.setTimestamp(7, (Timestamp) article.getWriteTime());
+			statement.setInt(8, article.getId());
+
+			return statement;
+		};
+		
 		jdbcContextWithStatementStrategy(stmt);
 	}
-	
+
 	public void jdbcContextWithStatementStrategy(StatementStrategy stmt) throws SQLException {
 
 		try (Connection c = dataSource.getConnection();
