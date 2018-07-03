@@ -126,12 +126,16 @@ public class ArticleDAO {
 	}
 
 	public void delete(int id) throws Exception {
-		String sql = "DELETE FROM article WHERE id = ?";
-		try (Connection connection = dataSource.getConnection();
-				PreparedStatement statement = connection.prepareStatement(sql)) {
+		StatementStrategy stmt = (c) -> {
+			String sql = "DELETE FROM article WHERE id = ?";
+
+			PreparedStatement statement = c.prepareStatement(sql);
 			statement.setInt(1, id);
-			statement.executeUpdate();
-		}
+
+			return statement;
+		};
+		
+		jdbcContextWithStatementStrategy(stmt);
 	}
 
 	public void insert(Article article) throws Exception {
