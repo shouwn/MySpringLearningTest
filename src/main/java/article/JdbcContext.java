@@ -1,0 +1,26 @@
+package article;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
+import javax.sql.DataSource;
+
+import article.DAO.StatementStrategy;
+
+public class JdbcContext {
+	private DataSource dataSource;
+
+	public void setDataSource(DataSource dataSource) {
+		this.dataSource = dataSource;
+	}
+	
+	public void workWithStatementStrategy(StatementStrategy stmt) throws SQLException {
+
+		try (Connection c = dataSource.getConnection();
+				PreparedStatement statement = stmt.makePreparedStatement(c)) {
+
+			statement.executeUpdate();
+		}
+	}
+}

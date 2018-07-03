@@ -13,11 +13,17 @@ import javax.sql.DataSource;
 
 import org.springframework.dao.EmptyResultDataAccessException;
 
+import article.JdbcContext;
 import article.dto.Article;
 
 public class ArticleDAO {
 
 	private DataSource dataSource;
+	private JdbcContext jdbcContext;
+	
+	public void setJdbcContext(JdbcContext jdbcContext) {
+		this.jdbcContext = jdbcContext;
+	}
 
 	public void setDataSource(DataSource dataSource) {
 		this.dataSource = dataSource;
@@ -126,16 +132,15 @@ public class ArticleDAO {
 	}
 
 	public void delete(int id) throws Exception {
-		StatementStrategy stmt = (c) -> {
+		
+		this.jdbcContext.workWithStatementStrategy((c) -> {
 			String sql = "DELETE FROM article WHERE id = ?";
 
 			PreparedStatement statement = c.prepareStatement(sql);
 			statement.setInt(1, id);
 
 			return statement;
-		};
-		
-		jdbcContextWithStatementStrategy(stmt);
+		});
 	}
 
 	public void insert(Article article) throws Exception {
@@ -155,7 +160,7 @@ public class ArticleDAO {
 	}
 
 	public void insertIncludeId(final Article article) throws Exception {
-		StatementStrategy stmt = (c) -> {
+		this.jdbcContext.workWithStatementStrategy((c) -> {
 			String sql = "INSERT article (no, title, body, userId, boardId, notice, writeTime, id)" +
 					" VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
@@ -171,17 +176,6 @@ public class ArticleDAO {
 			statement.setInt(8, article.getId());
 
 			return statement;
-		};
-		
-		jdbcContextWithStatementStrategy(stmt);
-	}
-
-	public void jdbcContextWithStatementStrategy(StatementStrategy stmt) throws SQLException {
-
-		try (Connection c = dataSource.getConnection();
-				PreparedStatement statement = stmt.makePreparedStatement(c)) {
-
-			statement.executeUpdate();
-		}
+		});
 	}
 }

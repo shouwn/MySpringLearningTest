@@ -3,27 +3,28 @@ package test.article;
 import java.sql.Timestamp;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import article.TestDataSource;
 import article.DAO.ArticleDAO;
 import article.dto.Article;
-/*
+
+
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration("/applicationContext.xml")
+@ContextConfiguration("/testApplicationContext.xml")
 //하나의 어플리케이션 컨텍스트 만들기 + 스프링 확장 기능 사용
 //@DirtiesContext 내부에서 applicationContext의 내용을 변경할 경우, 이게 끝나고 다른 테스트를 할 때 다시 context를 만들어줌
- */
 public class ArticleDAOTest {
 
-	private static ArticleDAO articleDAO;
+	@Autowired
+	private ArticleDAO articleDAO;
 
 	/*
-	@Autowired
-	private ApplicationContext context;
-	 */
+	private ApplicationContext context; 
 
 	@BeforeAll
 	public static void init() {
@@ -34,12 +35,10 @@ public class ArticleDAOTest {
 				new GenericXmlApplicationContext("applicationContext.xml");
 				// 클래스 패스의 시작은 src/main/java
 
-		 */
 		articleDAO = new ArticleDAO();
 		articleDAO.setDataSource(new TestDataSource());
 	}
 
-	/*
 	@BeforeEach
 	public void setUp() {
 
