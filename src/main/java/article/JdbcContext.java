@@ -23,4 +23,10 @@ public class JdbcContext {
 			statement.executeUpdate();
 		}
 	}
+	
+	public void executeSql(final String query) throws SQLException {
+		workWithStatementStrategy((c) ->{
+			return c.prepareStatement(query);
+		});
+	}
 }

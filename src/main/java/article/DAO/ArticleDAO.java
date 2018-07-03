@@ -178,4 +178,6 @@ public class ArticleDAO {
 			return statement;
 		});
 	}
+	
+
 }
