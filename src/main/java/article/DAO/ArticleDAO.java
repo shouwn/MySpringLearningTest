@@ -160,23 +160,20 @@ public class ArticleDAO {
 	}
 
 	public void insertIncludeId(final Article article) throws Exception {
-		this.jdbcContext.workWithStatementStrategy((c) -> {
-			String sql = "INSERT article (no, title, body, userId, boardId, notice, writeTime, id)" +
-					" VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-
-			PreparedStatement statement = c.prepareStatement(sql);
-
-			statement.setInt(1, article.getNo());
-			statement.setString(2, article.getTitle());
-			statement.setString(3, article.getBody());
-			statement.setInt(4, article.getUserId());
-			statement.setInt(5, article.getBoardId());
-			statement.setBoolean(6, article.isNotice());
-			statement.setTimestamp(7, (Timestamp) article.getWriteTime());
-			statement.setInt(8, article.getId());
-
-			return statement;
-		});
+		
+		String sql = "INSERT article (no, title, body, userId, boardId, notice, writeTime, id)" +
+				" VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+		
+		this.jdbcContext.executeSql(sql, 
+				article.getNo(),
+				article.getTitle(),
+				article.getBody(),
+				article.getUserId(),
+				article.getBoardId(),
+				article.isNotice(),
+				article.getWriteTime(),
+				article.getId()
+				);
 	}
 	
 

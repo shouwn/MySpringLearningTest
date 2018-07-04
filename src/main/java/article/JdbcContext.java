@@ -3,7 +3,6 @@ package article;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.function.Supplier;
 
 import javax.sql.DataSource;
 
@@ -31,9 +30,15 @@ public class JdbcContext {
 		});
 	}
 	
-	public void executeSql(final String query, Supplier[] setter) throws SQLException {
+	public void executeSql(final String query, Object... elements) throws SQLException {
 		workWithStatementStrategy((c) ->{
-			return c.prepareStatement(query);
+			PreparedStatement statement = c.prepareStatement(query);
+			int i = 1;
+			
+			for(Object element : elements) 
+				statement.setObject(i++, element);
+			
+			return statement;
 		});
 	}
 }
