@@ -11,28 +11,24 @@ import java.util.List;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 
-import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
 
-import article.JdbcContext;
 import article.dto.Article;
 
 public class ArticleDAO {
 
 	private DataSource dataSource;
-	private JdbcContext jdbcContext;
-	
-	public void setJdbcContext(JdbcContext jdbcContext) {
-		this.jdbcContext = jdbcContext;
-	}
+	private JdbcTemplate jdbcTemplate;
 
 	public void setDataSource(DataSource dataSource) {
+		this.jdbcTemplate = new JdbcTemplate(dataSource);
+
 		this.dataSource = dataSource;
 	}
 
 	public List<Article> findAll(int currentPage, int pageSize, String ss, String st, String od) 
 			throws SQLException, NamingException, ClassNotFoundException 
 	{
-
 		String sql = "call article_findAll(?, ?, ?, ?, ?)";
 		try (Connection connection = dataSource.getConnection();
 				PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -63,42 +59,28 @@ public class ArticleDAO {
 
 	public int count(String ss, String st) throws Exception {
 		String sql = "CALL article_count(?, ?)";
-		try (Connection connection = dataSource.getConnection();
-				PreparedStatement statement = connection.prepareStatement(sql)) {
-			statement.setString(1, ss);
-			if("2".equals(ss))
-				statement.setString(2, "%" + st + "%");
-			else
-				statement.setString(2, st + "%");
-			try (ResultSet resultSet = statement.executeQuery()) {
-				if (resultSet.next())
-					return resultSet.getInt(1);
-			}
-		}
-		return 0;
+
+		return this.jdbcTemplate.queryForObject(
+				sql, 
+				new Object[] {ss, st},
+				Integer.class
+				);
 	}
 
 	public int count() throws Exception{
 		String sql = "SELECT COUNT(*) FROM article";
-		try (Connection connection = dataSource.getConnection();
-				PreparedStatement statement = connection.prepareStatement(sql)) {
-			try (ResultSet resultSet = statement.executeQuery()) {
-				if (resultSet.next())
-					return resultSet.getInt(1);
-			}
-		}
-		return 0;
+
+		return this.jdbcTemplate.queryForObject(sql, Integer.class);
 	}
 
 	public Article findOne(int id) throws Exception {
 		String sql = "SELECT * FROM article WHERE id=?";
-		try (Connection connection = dataSource.getConnection();
-				PreparedStatement statement = connection.prepareStatement(sql)) {
-			statement.setInt(1, id);
-			try (ResultSet resultSet = statement.executeQuery()) {
-				Article article = null;
-				if (resultSet.next()) {
-					article = new Article();
+		
+		return this.jdbcTemplate.queryForObject(
+				sql, 
+				new Object[] {id},
+				(resultSet, rowNum) -> {
+					Article article = new Article();
 					article.setId(resultSet.getInt("id"));
 					article.setTitle(resultSet.getString("title"));
 					article.setBody(resultSet.getString("body"));
@@ -107,13 +89,9 @@ public class ArticleDAO {
 					article.setNotice(resultSet.getBoolean("notice"));
 					article.setWriteTime(resultSet.getTimestamp("writeTime"));
 					article.setNo(resultSet.getInt("no"));
+					
 					return article;
-				}
-
-				if(article == null) throw new EmptyResultDataAccessException(1);
-			}
-			return null;
-		}
+				});
 	}
 
 	public void update(Article article) throws SQLException, NamingException, ClassNotFoundException {
@@ -132,23 +110,18 @@ public class ArticleDAO {
 	}
 
 	public void delete(int id) throws Exception {
-		
-		this.jdbcContext.workWithStatementStrategy((c) -> {
-			String sql = "DELETE FROM article WHERE id = ?";
 
-			PreparedStatement statement = c.prepareStatement(sql);
-			statement.setInt(1, id);
+		String sql = "DELETE FROM article WHERE id = ?";
 
-			return statement;
-		});
+		this.jdbcTemplate.update(sql, id);
 	}
 
 	public void insert(Article article) throws Exception {
-		
+
 		String sql = "INSERT article (no, title, body, userId, boardId, notice, writeTime)" +
 				" VALUES (?, ?, ?, ?, ?, ?, ?)";
-		
-		this.jdbcContext.executeSql(sql, 
+
+		this.jdbcTemplate.update(sql, 
 				article.getNo(),
 				article.getTitle(),
 				article.getBody(),
@@ -160,11 +133,11 @@ public class ArticleDAO {
 	}
 
 	public void insertIncludeId(final Article article) throws Exception {
-		
+
 		String sql = "INSERT article (no, title, body, userId, boardId, notice, writeTime, id)" +
 				" VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-		
-		this.jdbcContext.executeSql(sql, 
+
+		this.jdbcTemplate.update(sql, 
 				article.getNo(),
 				article.getTitle(),
 				article.getBody(),
@@ -175,6 +148,6 @@ public class ArticleDAO {
 				article.getId()
 				);
 	}
-	
+
 
 }

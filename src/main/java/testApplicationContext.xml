@@ -7,7 +7,6 @@
 	
 	<bean id="articleDAO" class="article.DAO.ArticleDAO">
 		<property name="dataSource" ref="testDataSource" />
-		<property name="jdbcContext" ref="jdbcContext" />
 	</bean>
 	
 	<bean id="jdbcContext" class="article.JdbcContext">
