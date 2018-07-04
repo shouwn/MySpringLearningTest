@@ -23,7 +23,7 @@ public class MyScannerTest {
 	}
 
 	@Test
-	public void nextTest() throws IOException {
+	public void nextTestInteger() throws IOException {
 		
 		try(MyScanner<Integer> scan = new MyScanner<>()) {
 
@@ -40,6 +40,32 @@ public class MyScannerTest {
 			}
 			
 			Assertions.assertArrayEquals(expected, list.toArray(new Integer[0]));
+		}
+	}
+	
+	@Test
+	public void nextTestString() throws IOException {
+		try(MyScanner<String> scan = new MyScanner<>();
+				BufferedReader reader = new BufferedReader(new FileReader(testFilePath))) {
+
+			reader.readLine(); // 첫 번째 줄은 숫자 테스트
+			String[] expected = reader.readLine().split(" "); // 두 번쨰 줄은 영어 소문자
+			
+			Assertions.assertArrayEquals(new String[] {
+					"apple", "ball", "cat", "dead", "eat", "fake", "goal"
+			}, expected);
+			
+			scan.setReader(new FileReader(testFilePath));
+			scan.compile("[a-zA-z]+", s -> s);
+
+			List<String> list = new ArrayList<>();
+			
+			String i;
+			while((i = scan.next()) != null) {
+				list.add(i);
+			}
+			
+			Assertions.assertArrayEquals(expected, list.toArray(new String[0]));
 		}
 	}
 	
