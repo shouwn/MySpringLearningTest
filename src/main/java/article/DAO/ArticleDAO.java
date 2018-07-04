@@ -144,19 +144,19 @@ public class ArticleDAO {
 	}
 
 	public void insert(Article article) throws Exception {
+		
 		String sql = "INSERT article (no, title, body, userId, boardId, notice, writeTime)" +
 				" VALUES (?, ?, ?, ?, ?, ?, ?)";
-		try (Connection connection = dataSource.getConnection();
-				PreparedStatement statement = connection.prepareStatement(sql)) {
-			statement.setInt(1, article.getNo());
-			statement.setString(2, article.getTitle());
-			statement.setString(3, article.getBody());
-			statement.setInt(4, article.getUserId());
-			statement.setInt(5, article.getBoardId());
-			statement.setBoolean(6, article.isNotice());
-			statement.setTimestamp(7, new Timestamp(System.currentTimeMillis()));
-			statement.executeUpdate();
-		}
+		
+		this.jdbcContext.executeSql(sql, 
+				article.getNo(),
+				article.getTitle(),
+				article.getBody(),
+				article.getUserId(),
+				article.getBoardId(),
+				article.isNotice(),
+				new Timestamp(System.currentTimeMillis())
+				);
 	}
 
 	public void insertIncludeId(final Article article) throws Exception {
