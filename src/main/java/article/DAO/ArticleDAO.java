@@ -2,10 +2,8 @@ package article.DAO;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.naming.NamingException;
@@ -27,22 +25,20 @@ public class ArticleDAO {
 	}
 
 	public List<Article> findAll(int currentPage, int pageSize, String ss, String st, String od) 
-			throws SQLException, NamingException, ClassNotFoundException 
 	{
 		String sql = "call article_findAll(?, ?, ?, ?, ?)";
-		try (Connection connection = dataSource.getConnection();
-				PreparedStatement statement = connection.prepareStatement(sql)) {
-			statement.setInt(1, (currentPage - 1) * pageSize); // firstRecordIndex
-			statement.setInt(2, pageSize);                     // pageSize
-			statement.setString(3, ss);                        // 조회 방법
-			if("2".equals(ss))
-				statement.setString(4, "%" + st + "%");
-			else
-				statement.setString(4, st + "%");
-			statement.setString(5, od);                        // 정렬 순서
-			try (ResultSet resultSet = statement.executeQuery()) {
-				ArrayList<Article> list = new ArrayList<Article>();
-				while (resultSet.next()) {
+		
+		currentPage = Math.max(currentPage, 1);
+		return this.jdbcTemplate.query(
+				sql,
+				new Object[] {
+						(currentPage - 1) * pageSize,
+						pageSize,
+						ss,
+						st,
+						od
+				},
+				(resultSet, rowNum) -> {
 					Article article = new Article();
 					article.setId(resultSet.getInt("id"));
 					article.setNo(resultSet.getInt("no"));
@@ -50,14 +46,12 @@ public class ArticleDAO {
 					article.setBoardName(resultSet.getString("boardName"));
 					article.setWriteTime(resultSet.getTimestamp("writeTime"));
 					article.setTitle(resultSet.getString("title"));
-					list.add(article);
-				}
-				return list;
-			}
-		}
+				
+					return article;
+				});
 	}
 
-	public int count(String ss, String st) throws Exception {
+	public int count(String ss, String st){
 		String sql = "CALL article_count(?, ?)";
 
 		return this.jdbcTemplate.queryForObject(
@@ -67,13 +61,13 @@ public class ArticleDAO {
 				);
 	}
 
-	public int count() throws Exception{
+	public int count(){
 		String sql = "SELECT COUNT(*) FROM article";
 
 		return this.jdbcTemplate.queryForObject(sql, Integer.class);
 	}
 
-	public Article findOne(int id) throws Exception {
+	public Article findOne(int id) {
 		String sql = "SELECT * FROM article WHERE id=?";
 		
 		return this.jdbcTemplate.queryForObject(
@@ -109,14 +103,14 @@ public class ArticleDAO {
 		}
 	}
 
-	public void delete(int id) throws Exception {
+	public void delete(int id) {
 
 		String sql = "DELETE FROM article WHERE id = ?";
 
 		this.jdbcTemplate.update(sql, id);
 	}
 
-	public void insert(Article article) throws Exception {
+	public void insert(Article article) {
 
 		String sql = "INSERT article (no, title, body, userId, boardId, notice, writeTime)" +
 				" VALUES (?, ?, ?, ?, ?, ?, ?)";
@@ -132,7 +126,7 @@ public class ArticleDAO {
 				);
 	}
 
-	public void insertIncludeId(final Article article) throws Exception {
+	public void insertIncludeId(final Article article) {
 
 		String sql = "INSERT article (no, title, body, userId, boardId, notice, writeTime, id)" +
 				" VALUES (?, ?, ?, ?, ?, ?, ?, ?)";

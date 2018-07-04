@@ -49,9 +49,23 @@ public class ArticleDAOTest {
 		this.articleDAO = context.getBean("articleDAO", ArticleDAO.class);
 	}
 	 */
+	
+	@Test
+	public void findAll(){
+		Article article1 = articleTestObject(215);
+		Article article2 = articleTestObject(216);
+
+		articleDAO.delete(article1.getId());
+		articleDAO.delete(article2.getId());
+		
+		articleDAO.insertIncludeId(article1);
+		articleDAO.insertIncludeId(article2);
+		
+		Assertions.assertNotEquals(0, articleDAO.findAll(1, 10, "1", "", "1").size());
+	}
 
 	@Test
-	public void addAndGet() throws Exception {
+	public void addAndGet() {
 
 		Article article1 = articleTestObject(215);
 		Article article2 = articleTestObject(216);
