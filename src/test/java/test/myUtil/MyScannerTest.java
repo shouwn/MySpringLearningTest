@@ -12,6 +12,7 @@ import java.util.Scanner;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 
 import util.MyScanner;
 
@@ -99,28 +100,46 @@ public class MyScannerTest {
 	}
 	
 	@Test
-	public void compareReaderTime() throws FileNotFoundException, IOException {
-		long brTime = bufferedReaderTime();
-		long scanTime = scannerTime();
-		long myScanTime = myScannerTime();
+	public void compareReaderTime() throws Throwable {
+		long brTime = timeTemplate(this::doBufferedReader);
+		long scanTime = timeTemplate(this::doScanner);
+		long myScanTime = timeTemplate(this::doMyScanner);
+		
+		System.out.println("compareReaderTime");
+		System.out.println("    BufferedReader: " + brTime);
+		System.out.println("    Scanner: " + scanTime);
+		System.out.println("    MyScanner: " + myScanTime);
 	}
 	
-	public long bufferedReaderTime() throws FileNotFoundException, IOException {
+	public long timeTemplate(Executable executable) throws Throwable { // org.junit.jupiter.api.function.Executable;
+		long time = System.currentTimeMillis();
+		executable.execute();
+		return System.currentTimeMillis() - time;
+	}
+	
+	public void doBufferedReader() throws FileNotFoundException, IOException {
+
 		try(BufferedReader br = new BufferedReader(new FileReader(testShakePath))){
-			
+			String input;
+			while((input = br.readLine()) != null)
+				input.split(" ");
 		}
+		
 	}
 	
-	public long scannerTime() throws FileNotFoundException {
+	public void doScanner() throws FileNotFoundException {
 		try(Scanner scan = new Scanner(new BufferedReader(new FileReader(testShakePath)))){
-			
+			while(scan.hasNext())
+				scan.next();
 		}
 	}
 	
-	public long myScannerTime() throws IOException {
+	public void doMyScanner() throws IOException {
 		try(MyScanner<String> scan = new MyScanner<>()){
 			scan.setReader(new FileReader(testShakePath));
 			scan.compile("[a-zA-Z]+", s -> s);
+			
+			while(scan.next() != null);
 		}
 	}
 }
