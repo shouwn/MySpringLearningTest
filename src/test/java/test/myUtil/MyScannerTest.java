@@ -4,8 +4,10 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -16,10 +18,12 @@ import util.MyScanner;
 public class MyScannerTest {
 	
 	private static String testFilePath;
+	private static String testShakePath;
 	
 	@BeforeAll
 	public static void testFilePath() {
-		testFilePath = MyScannerTest.class.getResource("test.txt").getPath();	
+		testFilePath = MyScannerTest.class.getResource("test.txt").getPath();
+		testShakePath = MyScannerTest.class.getResource("shakespeare.txt").getPath();
 	}
 
 	@Test
@@ -69,6 +73,16 @@ public class MyScannerTest {
 		}
 	}
 	
+	@Test
+	public void alreadyClose() throws IOException {
+		try(MyScanner<Integer> scan = new MyScanner<>()){
+			InputStreamReader rd = new InputStreamReader(System.in);
+			scan.setReader(rd);
+			
+			rd.close();
+		}
+	}
+	
 	public Integer[] getArrayByBufferedReader() throws FileNotFoundException, IOException {
 		try(BufferedReader reader = new BufferedReader(new FileReader(testFilePath))){
 			Integer[] expected = new Integer[] {1, 2, 3, 4, 5, 6, 7, 8};
@@ -81,6 +95,32 @@ public class MyScannerTest {
 			Assertions.assertArrayEquals(expected, actual);
 			
 			return actual;
+		}
+	}
+	
+	@Test
+	public void compareReaderTime() throws FileNotFoundException, IOException {
+		long brTime = bufferedReaderTime();
+		long scanTime = scannerTime();
+		long myScanTime = myScannerTime();
+	}
+	
+	public long bufferedReaderTime() throws FileNotFoundException, IOException {
+		try(BufferedReader br = new BufferedReader(new FileReader(testShakePath))){
+			
+		}
+	}
+	
+	public long scannerTime() throws FileNotFoundException {
+		try(Scanner scan = new Scanner(new BufferedReader(new FileReader(testShakePath)))){
+			
+		}
+	}
+	
+	public long myScannerTime() throws IOException {
+		try(MyScanner<String> scan = new MyScanner<>()){
+			scan.setReader(new FileReader(testShakePath));
+			scan.compile("[a-zA-Z]+", s -> s);
 		}
 	}
 }

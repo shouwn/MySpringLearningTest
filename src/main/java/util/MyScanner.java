@@ -8,6 +8,21 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class MyScanner<T> implements AutoCloseable{
+	
+	public enum Regex{
+		NATURAL_NUMBER("[0-9]+");
+		
+		private String regex;
+
+		private Regex(String regex) {
+			this.regex = regex;
+		}
+		
+		@Override
+		public String toString() {
+			return regex;
+		}
+	}
 
 	private BufferedReader reader;
 	private Pattern pattern;
@@ -46,7 +61,7 @@ public class MyScanner<T> implements AutoCloseable{
 
 	@Override
 	public void close() throws IOException {
-		reader.close();
+		if(reader != null) reader.close();
 	}
 }
 
