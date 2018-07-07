@@ -1,7 +1,5 @@
 package article.DAO;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.List;
@@ -15,13 +13,10 @@ import article.dto.Article;
 
 public class ArticleDAO {
 
-	private DataSource dataSource;
 	private JdbcTemplate jdbcTemplate;
 
 	public void setDataSource(DataSource dataSource) {
 		this.jdbcTemplate = new JdbcTemplate(dataSource);
-
-		this.dataSource = dataSource;
 	}
 
 	public List<Article> findAll(int currentPage, int pageSize, String ss, String st, String od) 
@@ -89,18 +84,20 @@ public class ArticleDAO {
 	}
 
 	public void update(Article article) throws SQLException, NamingException, ClassNotFoundException {
+		
 		String sql = "UPDATE article SET " +
 				"title=?, body=?, userId=?, notice=? " +
 				"WHERE id = ? ";
-		try (Connection connection = dataSource.getConnection();
-				PreparedStatement statement = connection.prepareStatement(sql)) {
-			statement.setString(1, article.getTitle());
-			statement.setString(2, article.getBody());
-			statement.setInt(3, article.getUserId());
-			statement.setBoolean(4, article.isNotice());
-			statement.setInt(5, article.getId());
-			statement.executeUpdate();
-		}
+		
+		this.jdbcTemplate.update(
+				sql, 
+				new Object[] {
+					article.getTitle(),
+					article.getBody(),
+					article.getUserId(),
+					article.isNotice(),
+					article.getId()
+				});
 	}
 
 	public void delete(int id) {
