@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -128,10 +129,14 @@ public class ArticleDAOTest {
 		Assertions.assertEquals(count + 3, articleDAO.count());
 	}
 
-
-
 	@Test
 	public void duplicateKey() {
+		articleDAO.delete(article1.getId());
+		
+		Assertions.assertThrows(DataAccessException.class, () -> {
 
+			articleDAO.insertIncludeId(article1);
+			articleDAO.insertIncludeId(article1);
+		});
 	}
 }
