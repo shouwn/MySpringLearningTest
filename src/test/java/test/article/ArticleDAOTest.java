@@ -1,14 +1,19 @@
 package test.article;
 
+import java.sql.SQLException;
 import java.sql.Timestamp;
+
+import javax.sql.DataSource;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator;
+import org.springframework.jdbc.support.SQLExceptionTranslator;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -22,8 +27,9 @@ import article.dto.Article;
 //@DirtiesContext 내부에서 applicationContext의 내용을 변경할 경우, 이게 끝나고 다른 테스트를 할 때 다시 context를 만들어줌
 public class ArticleDAOTest {
 
-	@Autowired
-	private ArticleDAO articleDAO;
+	
+	@Autowired private ArticleDAO articleDAO;
+	@Autowired private DataSource dataSource;
 
 	private static Article article1;
 	private static Article article2;
@@ -133,10 +139,29 @@ public class ArticleDAOTest {
 	public void duplicateKey() {
 		articleDAO.delete(article1.getId());
 		
-		Assertions.assertThrows(DataAccessException.class, () -> {
+		Assertions.assertThrows(DuplicateKeyException.class, () -> {
 
 			articleDAO.insertIncludeId(article1);
 			articleDAO.insertIncludeId(article1);
 		});
+	}
+	
+	@Test
+	public void sqlExceptionTranslate() {
+		articleDAO.delete(article1.getId());
+		
+		try {
+			articleDAO.insertIncludeId(article1);
+			articleDAO.insertIncludeId(article1);
+		
+		}
+		catch(DuplicateKeyException ex) {
+			SQLException sqlEx = (SQLException)ex.getRootCause();
+			SQLExceptionTranslator set =
+					new SQLErrorCodeSQLExceptionTranslator(this.dataSource);
+			
+			Assertions.assertEquals(DuplicateKeyException.class, 
+					set.translate(null, null, sqlEx).getClass());
+		}
 	}
 }
