@@ -5,7 +5,7 @@
 	
 	<bean id="testDataSource" class="article.TestDataSource" />
 	
-	<bean id="articleDAO" class="article.DAO.ArticleDAO">
+	<bean id="articleDAO" class="article.DAO.ArticleDAOJDBC">
 		<property name="dataSource" ref="testDataSource" />
 	</bean>
 	

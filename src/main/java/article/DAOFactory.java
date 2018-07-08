@@ -5,7 +5,7 @@ import javax.sql.DataSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import article.DAO.ArticleDAO;
+import article.DAO.ArticleDAOJDBC;
 import article.DAO.BoardDAO;
 import article.DAO.UserDAO;
 
@@ -13,8 +13,8 @@ import article.DAO.UserDAO;
 public class DAOFactory {
 
 	@Bean
-	public ArticleDAO articleDAO() {
-		ArticleDAO articleDAO = new ArticleDAO();
+	public ArticleDAOJDBC articleDAO() {
+		ArticleDAOJDBC articleDAO = new ArticleDAOJDBC();
 		articleDAO.setDataSource(dataSource());
 		return articleDAO;
 	}
