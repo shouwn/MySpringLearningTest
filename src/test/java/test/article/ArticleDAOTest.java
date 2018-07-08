@@ -3,6 +3,7 @@ package test.article;
 import java.sql.Timestamp;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,30 @@ public class ArticleDAOTest {
 
 	@Autowired
 	private ArticleDAO articleDAO;
+
+	private static Article article1;
+	private static Article article2;
+	private static Article article3;
+
+	@BeforeAll
+	public static void init() {
+		article1 = articleTestObject(215);
+		article2 = articleTestObject(216);
+		article3 = articleTestObject(217);
+	}
+
+	public static Article articleTestObject(int id) {
+		Article article = new Article();
+		article.setId(id);
+		article.setNo(12345);
+		article.setTitle("TEST");
+		article.setBody("BODY FOR TEST");
+		article.setUserId(1);
+		article.setBoardId(1);
+		article.setNotice(true);
+		article.setWriteTime(new Timestamp(System.currentTimeMillis()));
+		return article;
+	}
 
 	/*
 	private ApplicationContext context; 
@@ -49,26 +74,21 @@ public class ArticleDAOTest {
 		this.articleDAO = context.getBean("articleDAO", ArticleDAO.class);
 	}
 	 */
-	
+
 	@Test
 	public void findAll(){
-		Article article1 = articleTestObject(215);
-		Article article2 = articleTestObject(216);
 
 		articleDAO.delete(article1.getId());
 		articleDAO.delete(article2.getId());
-		
+
 		articleDAO.insertIncludeId(article1);
 		articleDAO.insertIncludeId(article2);
-		
+
 		Assertions.assertNotEquals(0, articleDAO.findAll(1, 10, "1", "", "1").size());
 	}
 
 	@Test
 	public void addAndGet() {
-
-		Article article1 = articleTestObject(215);
-		Article article2 = articleTestObject(216);
 
 		int count = articleDAO.count();
 		articleDAO.delete(article1.getId());
@@ -95,32 +115,23 @@ public class ArticleDAOTest {
 	@Test
 	public void count() throws Exception {
 
-		int[] index = new int[] {0, 1, 2};
-		Article[] articles = new Article[3];
-
-		for(int i : index) {
-			articles[i] = articleTestObject(220 + i);
-			articleDAO.delete(articles[i].getId());
-		}
+		articleDAO.delete(article1.getId());
+		articleDAO.delete(article2.getId());
+		articleDAO.delete(article3.getId());
 
 		int count = articleDAO.count();
 
-		for(int i : index) {
-			articleDAO.insertIncludeId(articles[i]);
-			Assertions.assertEquals(count + i + 1, articleDAO.count());
-		}
+		articleDAO.insertIncludeId(article1);
+		articleDAO.insertIncludeId(article2);
+		articleDAO.insertIncludeId(article3);
+		
+		Assertions.assertEquals(count + 3, articleDAO.count());
 	}
 
-	public Article articleTestObject(int id) {
-		Article article = new Article();
-		article.setId(id);
-		article.setNo(12345);
-		article.setTitle("TEST");
-		article.setBody("BODY FOR TEST");
-		article.setUserId(1);
-		article.setBoardId(1);
-		article.setNotice(true);
-		article.setWriteTime(new Timestamp(System.currentTimeMillis()));
-		return article;
+
+
+	@Test
+	public void duplicateKey() {
+
 	}
 }
