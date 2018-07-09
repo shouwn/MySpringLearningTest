@@ -178,7 +178,10 @@ public class ArticleDAOTest {
 	@Test
 	public void update() {
 		articleDAO.delete(article1.getId());
+		articleDAO.delete(article2.getId());
+		
 		articleDAO.insertIncludeId(article1);
+		articleDAO.insertIncludeId(article2);
 		
 		article1.setBoardId(1);
 		article1.setLevel(Level.NEW);
@@ -187,5 +190,6 @@ public class ArticleDAOTest {
 		articleDAO.update(article1);
 		
 		Assertions.assertEquals(article1, articleDAO.findOne(article1.getId()));
+		Assertions.assertEquals(article2, articleDAO.findOne(article2.getId()));
 	}
 }
