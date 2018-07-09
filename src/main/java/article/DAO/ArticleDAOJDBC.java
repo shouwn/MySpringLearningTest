@@ -99,16 +99,23 @@ public class ArticleDAOJDBC implements ArticleDAO{
 	public void update(Article article) {
 		
 		String sql = "UPDATE article SET " +
-				"title=?, body=?, userId=?, notice=? " +
+				"no=?, title=?, body=?, userId=?, boardId=?, notice=?, writeTime=?, " + 
+				"readCount=?, level=?, recommend=? " +
 				"WHERE id = ? ";
 		
 		this.jdbcTemplate.update(
 				sql, 
 				new Object[] {
+					article.getNo(),
 					article.getTitle(),
 					article.getBody(),
 					article.getUserId(),
+					article.getBoardId(),
 					article.isNotice(),
+					article.getWriteTime(),
+					article.getRead(),
+					article.getLevel().intValue(),
+					article.getRecommend(),
 					article.getId()
 				});
 	}

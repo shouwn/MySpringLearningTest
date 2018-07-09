@@ -6,7 +6,7 @@ import java.sql.Timestamp;
 import javax.sql.DataSource;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,8 +36,8 @@ public class ArticleDAOTest {
 	private static Article article2;
 	private static Article article3;
 
-	@BeforeAll
-	public static void init() {
+	@BeforeEach
+	public void init() {
 		article1 = articleTestObject(215);
 		article1.setRead(52);
 		article1.setLevel(Level.COMMON);
@@ -173,5 +173,19 @@ public class ArticleDAOTest {
 			Assertions.assertEquals(DuplicateKeyException.class, 
 					set.translate(null, null, sqlEx).getClass());
 		}
+	}
+	
+	@Test
+	public void update() {
+		articleDAO.delete(article1.getId());
+		articleDAO.insertIncludeId(article1);
+		
+		article1.setBoardId(1);
+		article1.setLevel(Level.NEW);
+		article1.setRead(5123);
+		article1.setRecommend(100);
+		articleDAO.update(article1);
+		
+		Assertions.assertEquals(article1, articleDAO.findOne(article1.getId()));
 	}
 }
