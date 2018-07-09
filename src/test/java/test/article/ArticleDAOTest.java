@@ -17,6 +17,7 @@ import org.springframework.jdbc.support.SQLExceptionTranslator;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import article.Level;
 import article.DAO.ArticleDAO;
 import article.dto.Article;
 
@@ -38,8 +39,19 @@ public class ArticleDAOTest {
 	@BeforeAll
 	public static void init() {
 		article1 = articleTestObject(215);
+		article1.setRead(52);
+		article1.setLevel(Level.COMMON);
+		article1.setRecommend(2);
+		
 		article2 = articleTestObject(216);
+		article2.setRead(14);
+		article2.setLevel(Level.POPULAR);
+		article2.setRecommend(7);
+		
 		article3 = articleTestObject(217);
+		article3.setRead(21);
+		article3.setLevel(Level.NEW);
+		article3.setRecommend(10);
 	}
 
 	public static Article articleTestObject(int id) {
@@ -97,16 +109,14 @@ public class ArticleDAOTest {
 	@Test
 	public void addAndGet() {
 
-		int count = articleDAO.count();
 		articleDAO.delete(article1.getId());
 		articleDAO.delete(article2.getId());
-
-		Assertions.assertEquals(count - 2, articleDAO.count());
+		int count = articleDAO.count();
 
 		articleDAO.insertIncludeId(article1);
 		articleDAO.insertIncludeId(article2);
 
-		Assertions.assertEquals(count, articleDAO.count());
+		Assertions.assertEquals(count + 2, articleDAO.count());
 		Assertions.assertEquals(article1, articleDAO.findOne(article1.getId()));
 		Assertions.assertEquals(article2, articleDAO.findOne(article2.getId()));
 	}

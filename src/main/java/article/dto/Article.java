@@ -2,18 +2,41 @@ package article.dto;
 
 import java.util.Date;
 
+import article.Level;
+
 public class Article {
-	int id;
-	int boardId;
-	String boardName;
-	int userId;
-	int no;
-	Date writeTime;
-	String title;
-	String body;
-	boolean notice;
-	String userName;
+	private int id;
+	private int boardId;
+	private String boardName;
+	private int userId;
+	private int no;
+	private Date writeTime;
+	private String title;
+	private String body;
+	private boolean notice;
+	private String userName;
+	private Level level;
+	private int read;
+	private int recommend;
 	
+	public Level getLevel() {
+		return level;
+	}
+	public void setLevel(Level level) {
+		this.level = level;
+	}
+	public int getRead() {
+		return read;
+	}
+	public void setRead(int read) {
+		this.read = read;
+	}
+	public int getRecommend() {
+		return recommend;
+	}
+	public void setRecommend(int recommend) {
+		this.recommend = recommend;
+	}
 	public String getUserName() {
 		return userName;
 	}
@@ -83,15 +106,17 @@ public class Article {
 		result = prime * result + ((boardName == null) ? 0 : boardName.hashCode());
 		result = prime * result + ((body == null) ? 0 : body.hashCode());
 		result = prime * result + id;
+		result = prime * result + ((level == null) ? 0 : level.hashCode());
 		result = prime * result + no;
 		result = prime * result + (notice ? 1231 : 1237);
+		result = prime * result + read;
+		result = prime * result + recommend;
 		result = prime * result + ((title == null) ? 0 : title.hashCode());
 		result = prime * result + userId;
 		result = prime * result + ((userName == null) ? 0 : userName.hashCode());
 		result = prime * result + ((writeTime == null) ? 0 : writeTime.hashCode());
 		return result;
 	}
-	
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -115,9 +140,15 @@ public class Article {
 			return false;
 		if (id != other.id)
 			return false;
+		if (level != other.level)
+			return false;
 		if (no != other.no)
 			return false;
 		if (notice != other.notice)
+			return false;
+		if (read != other.read)
+			return false;
+		if (recommend != other.recommend)
 			return false;
 		if (title == null) {
 			if (other.title != null)

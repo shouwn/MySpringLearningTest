@@ -9,6 +9,7 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
+import article.Level;
 import article.dto.Article;
 
 public class ArticleDAOJDBC implements ArticleDAO{
@@ -25,6 +26,10 @@ public class ArticleDAOJDBC implements ArticleDAO{
 		article.setNotice(resultSet.getBoolean("notice"));
 		article.setWriteTime(resultSet.getTimestamp("writeTime"));
 		article.setNo(resultSet.getInt("no"));
+		
+		article.setRecommend(resultSet.getInt("recommend"));
+		article.setRead(resultSet.getInt("readCount"));
+		article.setLevel(Level.valueOf(resultSet.getInt("level")));
 		
 		return article;
 	};
@@ -136,8 +141,8 @@ public class ArticleDAOJDBC implements ArticleDAO{
 	@Override
 	public void insertIncludeId(final Article article) throws DuplicateKeyException{
 
-		String sql = "INSERT article (no, title, body, userId, boardId, notice, writeTime, id)" +
-				" VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+		String sql = "INSERT article (no, title, body, userId, boardId, notice, writeTime, id, level, readCount, recommend)" +
+				" VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 		this.jdbcTemplate.update(sql, 
 				article.getNo(),
@@ -147,7 +152,10 @@ public class ArticleDAOJDBC implements ArticleDAO{
 				article.getBoardId(),
 				article.isNotice(),
 				article.getWriteTime(),
-				article.getId()
+				article.getId(),
+				article.getLevel().intValue(),
+				article.getRead(),
+				article.getRecommend()
 				);
 	}
 
