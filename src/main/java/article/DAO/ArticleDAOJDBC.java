@@ -28,7 +28,7 @@ public class ArticleDAOJDBC implements ArticleDAO{
 		article.setNo(resultSet.getInt("no"));
 		
 		article.setRecommend(resultSet.getInt("recommend"));
-		article.setRead(resultSet.getInt("readCount"));
+		article.setReadCount(resultSet.getInt("readCount"));
 		article.setLevel(Level.valueOf(resultSet.getInt("level")));
 		
 		return article;
@@ -113,7 +113,7 @@ public class ArticleDAOJDBC implements ArticleDAO{
 					article.getBoardId(),
 					article.isNotice(),
 					article.getWriteTime(),
-					article.getRead(),
+					article.getReadCount(),
 					article.getLevel().intValue(),
 					article.getRecommend(),
 					article.getId()
@@ -161,7 +161,7 @@ public class ArticleDAOJDBC implements ArticleDAO{
 				article.getWriteTime(),
 				article.getId(),
 				article.getLevel().intValue(),
-				article.getRead(),
+				article.getReadCount(),
 				article.getRecommend()
 				);
 	}

@@ -62,7 +62,6 @@ public class TemporalTest {
 				ChronoUnit.DAYS.between(LocalDate.of(2017,  7, 1), LocalDate.of(2018, 7, 8)), 
 				7 + 365
 				);
-		
 	}
 	
 	@Test

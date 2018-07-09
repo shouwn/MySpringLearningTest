@@ -1,7 +1,6 @@
 package test.article;
 
 import java.sql.SQLException;
-import java.sql.Timestamp;
 
 import javax.sql.DataSource;
 
@@ -38,33 +37,9 @@ public class ArticleDAOTest {
 
 	@BeforeEach
 	public void init() {
-		article1 = articleTestObject(215);
-		article1.setRead(52);
-		article1.setLevel(Level.COMMON);
-		article1.setRecommend(2);
-		
-		article2 = articleTestObject(216);
-		article2.setRead(14);
-		article2.setLevel(Level.POPULAR);
-		article2.setRecommend(7);
-		
-		article3 = articleTestObject(217);
-		article3.setRead(21);
-		article3.setLevel(Level.NEW);
-		article3.setRecommend(10);
-	}
-
-	public static Article articleTestObject(int id) {
-		Article article = new Article();
-		article.setId(id);
-		article.setNo(12345);
-		article.setTitle("TEST");
-		article.setBody("BODY FOR TEST");
-		article.setUserId(1);
-		article.setBoardId(1);
-		article.setNotice(true);
-		article.setWriteTime(new Timestamp(System.currentTimeMillis()));
-		return article;
+		article1 = TestObject.makeArticleTestObject(215, Level.COMMON, 52, 2);
+		article2 = TestObject.makeArticleTestObject(216, Level.POPULAR, 126, 54);
+		article3 = TestObject.makeArticleTestObject(217, Level.NEW, 2, 1);
 	}
 
 	/*
@@ -185,7 +160,7 @@ public class ArticleDAOTest {
 		
 		article1.setBoardId(1);
 		article1.setLevel(Level.NEW);
-		article1.setRead(5123);
+		article1.setReadCount(5123);
 		article1.setRecommend(100);
 		articleDAO.update(article1);
 		

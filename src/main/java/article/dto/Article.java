@@ -16,20 +16,21 @@ public class Article {
 	private boolean notice;
 	private String userName;
 	private Level level;
-	private int read;
+	private int readCount;
 	private int recommend;
 	
+	
+	public int getReadCount() {
+		return readCount;
+	}
+	public void setReadCount(int readCount) {
+		this.readCount = readCount;
+	}
 	public Level getLevel() {
 		return level;
 	}
 	public void setLevel(Level level) {
 		this.level = level;
-	}
-	public int getRead() {
-		return read;
-	}
-	public void setRead(int read) {
-		this.read = read;
 	}
 	public int getRecommend() {
 		return recommend;
@@ -109,7 +110,7 @@ public class Article {
 		result = prime * result + ((level == null) ? 0 : level.hashCode());
 		result = prime * result + no;
 		result = prime * result + (notice ? 1231 : 1237);
-		result = prime * result + read;
+		result = prime * result + readCount;
 		result = prime * result + recommend;
 		result = prime * result + ((title == null) ? 0 : title.hashCode());
 		result = prime * result + userId;
@@ -146,7 +147,7 @@ public class Article {
 			return false;
 		if (notice != other.notice)
 			return false;
-		if (read != other.read)
+		if (readCount != other.readCount)
 			return false;
 		if (recommend != other.recommend)
 			return false;

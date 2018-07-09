@@ -1,5 +1,8 @@
 package article.service;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 
 import article.Level;
@@ -12,14 +15,35 @@ public class ArticleService {
 	public void setArticleDAO(ArticleDAO articleDAO) {
 		this.articleDAO = articleDAO;
 	}
-	
+
 	public void upgradeLevels() {
+		Duration week = Duration.ofDays(7);
+		LocalDateTime now = LocalDateTime.now();
+
 		List<Article> articles = articleDAO.findAll(1, 10, "1", "", "1");
-		LocalDate 
-		
+
+
 		for(Article article : articles) {
-			if(article.getLevel() == Level.NEW && )
+			Boolean changed = null;
+			if(article.getLevel() == Level.NEW 
+					&& Duration.between(
+							article.getWriteTime().toInstant()
+							.atZone(ZoneId.systemDefault())
+							.toLocalDateTime(), now
+							)
+					.compareTo(week) > 0
+					) {
+				article.setLevel(Level.COMMON);
+				changed = true;
+			}
+			else if(article.getLevel() == Level.COMMON && article.getRecommend() > 30) {
+				article.setLevel(Level.POPULAR);
+				changed = true;
+			}
+			else changed = false;
+			
+			if(changed) articleDAO.update(article);
 		}
 	}
-	
+
 }
