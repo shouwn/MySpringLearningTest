@@ -5,6 +5,10 @@
 	
 	<bean id="testDataSource" class="article.TestDataSource" />
 	
+	<bean id="articleService" class="article.service.ArticleService" >
+		<property name="articleDAO" ref="articleDAO" />
+	</bean>
+	
 	<bean id="articleDAO" class="article.DAO.ArticleDAOJDBC">
 		<property name="dataSource" ref="testDataSource" />
 	</bean>
