@@ -59,7 +59,25 @@ public class ArticleServiceTest {
 		checkLevel(Level.COMMON, articles.get(2));
 		checkLevel(Level.POPULAR, articles.get(3));
 		checkLevel(Level.POPULAR, articles.get(4));
-			
+		
+	}
+	
+	@Test
+	public void add() {
+
+		// delete for test
+		for(Article article : articles)
+			articleDAO.delete(article.getId());
+		
+		Article articleWithLevel = articles.get(4);
+		Article articleWithoutLevel = articles.get(1);
+		articleWithoutLevel.setLevel(null);
+		
+		articleService.add(articleWithLevel);
+		articleService.add(articleWithoutLevel);
+		
+		checkLevel(Level.NEW, articleWithoutLevel);
+		checkLevel(Level.POPULAR, articleWithLevel);
 	}
 	
 	public void checkLevel(Level expected, Article article) {

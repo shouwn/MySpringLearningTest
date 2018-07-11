@@ -42,5 +42,11 @@ public class ArticleService {
 			if(changed) articleDAO.update(article);
 		}
 	}
+	
+	public void add(Article article) {
+		if(article.getLevel() == null) article.setLevel(Level.NEW);
+		articleDAO.insertIncludeId(article);
+	}
+	
 
 }
