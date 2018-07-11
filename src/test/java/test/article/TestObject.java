@@ -38,4 +38,20 @@ public class TestObject {
 		article.setRecommend(recommend);
 		return article;
 	}
+	
+	public static Article makeArticleTestObject(int id, Level level, int readCount, int recommend, Timestamp writeTime) {
+		Article article = new Article();
+		article.setId(id);
+		article.setNo(12345);
+		article.setTitle("TEST");
+		article.setBody("BODY FOR TEST");
+		article.setUserId(1);
+		article.setBoardId(1);
+		article.setNotice(true);
+		article.setWriteTime(writeTime);
+		article.setReadCount(readCount);
+		article.setLevel(level);
+		article.setRecommend(recommend);
+		return article;
+	}
 }

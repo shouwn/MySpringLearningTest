@@ -1,6 +1,7 @@
 package test.article;
 
 import java.sql.SQLException;
+import java.util.List;
 
 import javax.sql.DataSource;
 
@@ -78,7 +79,11 @@ public class ArticleDAOTest {
 		articleDAO.insertIncludeId(article1);
 		articleDAO.insertIncludeId(article2);
 
-		Assertions.assertNotEquals(0, articleDAO.findAll(1, 10, "1", "", "1").size());
+		List<Article> list = articleDAO.findAll(1, 100, "1", "", "1");
+		
+		Assertions.assertNotEquals(0, list.size());
+		Assertions.assertTrue( () -> list.contains(article1));
+		Assertions.assertTrue( () -> list.contains(article2));
 	}
 
 	@Test

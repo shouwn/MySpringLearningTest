@@ -53,17 +53,8 @@ public class ArticleDAOJDBC implements ArticleDAO{
 						st,
 						od
 				},
-				(resultSet, rowNum) -> {
-					Article article = new Article();
-					article.setId(resultSet.getInt("id"));
-					article.setNo(resultSet.getInt("no"));
-					article.setUserName(resultSet.getString("name"));
-					article.setBoardName(resultSet.getString("boardName"));
-					article.setWriteTime(resultSet.getTimestamp("writeTime"));
-					article.setTitle(resultSet.getString("title"));
-				
-					return article;
-				});
+				articleMapper
+				);
 	}
 
 	@Override
