@@ -5,6 +5,8 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PipedReader;
+import java.io.PipedWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -21,10 +23,76 @@ public class MyScannerTest {
 	private static String testFilePath;
 	private static String testShakePath;
 	
+	static class Pair{
+		int left;
+		int right;
+		
+		public Pair(int left, int right) {
+			super();
+			this.left = left;
+			this.right = right;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + left;
+			result = prime * result + right;
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			Pair other = (Pair) obj;
+			if (left != other.left)
+				return false;
+			if (right != other.right)
+				return false;
+			return true;
+		}
+	}
+	
 	@BeforeAll
 	public static void testFilePath() {
 		testFilePath = MyScannerTest.class.getResource("test.txt").getPath();
 		testShakePath = MyScannerTest.class.getResource("shakespeare.txt").getPath();
+	}
+	
+	@Test
+	public void readTest() throws IOException {
+
+		try(PipedWriter pw = new PipedWriter();
+				MyScanner<Pair> scan = new MyScanner<>()){
+			
+			scan.setReader(new PipedReader(pw));
+			scan.compile("[0-9]+ [0-9]+", s -> {
+				String[] in = s.split(" ");
+				
+				return new Pair(Integer.valueOf(in[0]), Integer.valueOf(in[1]));
+			});
+			
+			pw.write("10 11");
+			pw.write("\n");
+			
+			Assertions.assertEquals(new Pair(10, 11), scan.next());
+			
+			pw.write("20 241");
+			pw.write("\n");
+			
+			Assertions.assertEquals(new Pair(20, 241), scan.next());
+			
+			pw.write("0 41");
+			pw.write("\n");
+			
+			Assertions.assertEquals(new Pair(0, 41), scan.next());
+		}
 	}
 
 	@Test

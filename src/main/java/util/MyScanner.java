@@ -19,14 +19,13 @@ public class MyScanner<T> implements AutoCloseable{
 	}
 	public void compile(String regex, Function<String, T> nexter) throws IOException {
 		pattern = Pattern.compile(regex);
-		matcher = pattern.matcher(reader.readLine());
 		this.nexter = nexter;
 	}
 
 	// 정규식에 해당하는 문자열이 있는지 확인하는 메소드
 	private boolean find() throws IOException {
 
-		while(!matcher.find()) {
+		while(matcher == null || !matcher.find()) {
 			String line = reader.readLine();
 			if(line == null)
 				return false;
