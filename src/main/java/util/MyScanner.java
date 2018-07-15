@@ -9,8 +9,6 @@ import java.util.regex.Pattern;
 
 public class MyScanner<T> implements AutoCloseable{
 
-	//표준 입출력에서 마지막 끝을 나타내는 에러가 있음 잡기 바람
-
 	private BufferedReader reader;
 
 	private Pattern integerPattern = Pattern.compile("([-+]?[0-9]+)");
