@@ -1,9 +1,15 @@
 package article.service;
 
+import java.sql.Connection;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
+
+import javax.sql.DataSource;
+
+import org.springframework.jdbc.datasource.DataSourceUtils;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import article.Level;
 import article.DAO.ArticleDAO;
@@ -15,19 +21,41 @@ public class ArticleService {
 	public static final int MIN_RECOMMEND_FOR_POPULAR = 30;
 	
 	private ArticleDAO articleDAO;
+	private DataSource dataSource;
 
 	public void setArticleDAO(ArticleDAO articleDAO) {
 		this.articleDAO = articleDAO;
 	}
+	
+	public void setDataSource(DataSource dataSource) {
+		this.dataSource = dataSource;
+	}
 
-	public void upgradeLevels() {
+	public void upgradeLevels() throws Exception{
 
-		List<Article> articles = articleDAO.findAll(1, 100, "1", "", "1"); // 완벽하게 하려면 수정 필요
+		TransactionSynchronizationManager.initSynchronization();
+		Connection c = DataSourceUtils.getConnection(dataSource);
+		c.setAutoCommit(false);
+		
+		try {
 
-		for(Article article : articles) {
-			if(canUpgradeLevel(article))
-				upgradeLevel(article);
+			List<Article> articles = articleDAO.findAll(1, 100, "1", "", "1"); // 완벽하게 하려면 수정 필요
 
+			for(Article article : articles) {
+				if(canUpgradeLevel(article))
+					upgradeLevel(article);
+
+			}
+			c.commit();
+		} catch (Exception e) {
+			c.rollback();
+			throw e;
+		} finally {
+			DataSourceUtils.releaseConnection(c, dataSource);
+			TransactionSynchronizationManager.unbindResource(this.dataSource);
+			TransactionSynchronizationManager.clearSynchronization();
+		}
+		
 			/*
 			Boolean changed = null;
 			if(article.getLevel() == Level.NEW
@@ -47,15 +75,14 @@ public class ArticleService {
 
 			if(changed) articleDAO.update(article);
 			 */
-		}
 	}
 	
-	public void upgradeLevel(Article article) {
+	protected void upgradeLevel(Article article) {
 		article.upgradeLevel();
 		articleDAO.update(article);
 	}
 
-	public boolean canUpgradeLevel(Article article) {
+	private boolean canUpgradeLevel(Article article) {
 		Level currentLevel = article.getLevel();
 
 		switch(currentLevel) {

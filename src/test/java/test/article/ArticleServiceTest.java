@@ -8,6 +8,8 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.sql.DataSource;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,8 +26,27 @@ import article.service.ArticleService;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration("/testApplicationContext.xml")
 public class ArticleServiceTest {
+	
+	static class TestArticleService extends ArticleService{
+		private int id;
+
+		public TestArticleService(int id) {
+			this.id = id;
+		}
+		
+		@Override
+		protected void upgradeLevel(Article article) {
+			if(article.getId() == this.id) throw new TestArticleServiceException();
+			super.upgradeLevel(article);
+		}
+	}
+	
+	static class TestArticleServiceException extends RuntimeException{
+	}
+	
 	@Autowired ArticleService articleService;
 	@Autowired ArticleDAO articleDAO;
+	@Autowired DataSource dataSource;
 
 	List<Article> articles;
 
@@ -50,9 +71,34 @@ public class ArticleServiceTest {
 				TestObject.makeArticleTestObject(254, Level.POPULAR, 100, Integer.MAX_VALUE)
 				);
 	}
+	
+	@Test
+	public void upgradeAllOrNothing() throws Exception {
+		ArticleService testArticleService = new TestArticleService(articles.get(3).getId());
+		testArticleService.setArticleDAO(this.articleDAO);
+		testArticleService.setDataSource(this.dataSource);
+
+		// delete for test
+		for(Article article : articles)
+			articleDAO.delete(article.getId());
+		
+		// insert for test
+		for(Article article : articles)
+			articleDAO.insertIncludeId(article);
+		
+		try {
+			testArticleService.upgradeLevels();
+			Assertions.fail("TestUserServiceException expected");
+		}
+		catch(TestArticleServiceException e) {
+			
+		}
+		
+		checkLevelUpgraded(articles.get(1), false);
+	}
 
 	@Test
-	public void upgradeLevels() {
+	public void upgradeLevels() throws Exception {
 		// delete for test
 		for(Article article : articles)
 			articleDAO.delete(article.getId());
