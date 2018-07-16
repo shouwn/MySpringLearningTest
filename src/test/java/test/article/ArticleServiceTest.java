@@ -23,7 +23,7 @@ import article.service.ArticleService;
 public class ArticleServiceTest {
 	@Autowired ArticleService articleService;
 	@Autowired ArticleDAO articleDAO;
-	
+
 	List<Article> articles;
 
 	@Test
@@ -41,45 +41,56 @@ public class ArticleServiceTest {
 				TestObject.makeArticleTestObject(254, Level.POPULAR, 100, 100)
 				);
 	}
-	
+
 	@Test
 	public void upgradeLevels() {
 		// delete for test
 		for(Article article : articles)
 			articleDAO.delete(article.getId());
-		
+
 		// insert for test
 		for(Article article : articles)
 			articleDAO.insertIncludeId(article);
-		
+
 		articleService.upgradeLevels();
-		
-		checkLevel(Level.NEW, articles.get(0));
-		checkLevel(Level.COMMON, articles.get(1));
-		checkLevel(Level.COMMON, articles.get(2));
-		checkLevel(Level.POPULAR, articles.get(3));
-		checkLevel(Level.POPULAR, articles.get(4));
-		
+
+		checkLevelUpgraded(articles.get(0), false);
+		checkLevelUpgraded(articles.get(1), true);
+		checkLevelUpgraded(articles.get(2), false);
+		checkLevelUpgraded(articles.get(3), true);
+		checkLevelUpgraded(articles.get(4), false);
+
 	}
-	
+
 	@Test
 	public void add() {
 
 		// delete for test
 		for(Article article : articles)
 			articleDAO.delete(article.getId());
-		
+
 		Article articleWithLevel = articles.get(4);
 		Article articleWithoutLevel = articles.get(1);
 		articleWithoutLevel.setLevel(null);
-		
+
 		articleService.add(articleWithLevel);
 		articleService.add(articleWithoutLevel);
-		
+
 		checkLevel(Level.NEW, articleWithoutLevel);
 		checkLevel(Level.POPULAR, articleWithLevel);
 	}
-	
+
+	public void checkLevelUpgraded(Article article, boolean upgraded) {
+		Article articleUpdate = articleDAO.findOne(article.getId());
+		if(upgraded)
+			Assertions.assertEquals(
+					article.getLevel().nextLevel(), 
+					articleUpdate.getLevel()
+					);
+		else
+			Assertions.assertEquals(article.getLevel(), articleUpdate.getLevel());
+	}
+
 	public void checkLevel(Level expected, Article article) {
 		Assertions.assertEquals(expected, articleDAO.findOne(article.getId()).getLevel());
 	}
