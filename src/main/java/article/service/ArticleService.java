@@ -47,8 +47,7 @@ public class ArticleService {
 	}
 	
 	public void upgradeLevel(Article article) {
-		if(article.getLevel() == Level.NEW) article.setLevel(Level.COMMON);
-		else if(article.getLevel() == Level.COMMON) article.setLevel(Level.POPULAR);
+		article.upgradeLevel();
 		articleDAO.update(article);
 	}
 
