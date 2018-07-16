@@ -8,8 +8,6 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,6 +15,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import article.Level;
 import article.DAO.ArticleDAO;
@@ -46,7 +45,7 @@ public class ArticleServiceTest {
 	
 	@Autowired ArticleService articleService;
 	@Autowired ArticleDAO articleDAO;
-	@Autowired DataSource dataSource;
+	@Autowired PlatformTransactionManager transactionManager;
 
 	List<Article> articles;
 
@@ -76,7 +75,7 @@ public class ArticleServiceTest {
 	public void upgradeAllOrNothing() throws Exception {
 		ArticleService testArticleService = new TestArticleService(articles.get(3).getId());
 		testArticleService.setArticleDAO(this.articleDAO);
-		testArticleService.setDataSource(this.dataSource);
+		testArticleService.setTransactionManager(transactionManager);
 
 		// delete for test
 		for(Article article : articles)

@@ -7,7 +7,7 @@
 	
 	<bean id="articleService" class="article.service.ArticleService" >
 		<property name="articleDAO" ref="articleDAO" />
-		<property name="dataSource" ref="testDataSource" />
+		<property name="transactionManager" ref="transactionManager" />
 	</bean>
 	
 	<bean id="articleDAO" class="article.DAO.ArticleDAOJDBC">
@@ -22,4 +22,9 @@
 		<property name="articleDAO" ref="articleDAO" />
 	</bean>
 
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="testDataSource"></property>
+	</bean>
+	
 </beans>

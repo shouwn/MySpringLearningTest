@@ -1,15 +1,13 @@
 package article.service;
 
-import java.sql.Connection;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
 
-import javax.sql.DataSource;
-
-import org.springframework.jdbc.datasource.DataSourceUtils;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import article.Level;
 import article.DAO.ArticleDAO;
@@ -21,21 +19,20 @@ public class ArticleService {
 	public static final int MIN_RECOMMEND_FOR_POPULAR = 30;
 	
 	private ArticleDAO articleDAO;
-	private DataSource dataSource;
+	private PlatformTransactionManager transactionManager;
+	
+	public void setTransactionManager(PlatformTransactionManager transactionManager) {
+		this.transactionManager = transactionManager;
+	}
 
 	public void setArticleDAO(ArticleDAO articleDAO) {
 		this.articleDAO = articleDAO;
 	}
-	
-	public void setDataSource(DataSource dataSource) {
-		this.dataSource = dataSource;
-	}
 
 	public void upgradeLevels() throws Exception{
-
-		TransactionSynchronizationManager.initSynchronization();
-		Connection c = DataSourceUtils.getConnection(dataSource);
-		c.setAutoCommit(false);
+		
+		TransactionStatus status = 
+				this.transactionManager.getTransaction(new DefaultTransactionDefinition());
 		
 		try {
 
@@ -46,15 +43,11 @@ public class ArticleService {
 					upgradeLevel(article);
 
 			}
-			c.commit();
+			this.transactionManager.commit(status);
 		} catch (Exception e) {
-			c.rollback();
+			this.transactionManager.rollback(status);
 			throw e;
-		} finally {
-			DataSourceUtils.releaseConnection(c, dataSource);
-			TransactionSynchronizationManager.unbindResource(this.dataSource);
-			TransactionSynchronizationManager.clearSynchronization();
-		}
+		} 
 		
 			/*
 			Boolean changed = null;
