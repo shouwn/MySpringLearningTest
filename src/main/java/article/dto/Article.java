@@ -5,6 +5,7 @@ import java.util.Date;
 import article.Level;
 
 public class Article {
+	
 	private int id;
 	private int boardId;
 	private String boardName;
@@ -18,8 +19,7 @@ public class Article {
 	private Level level;
 	private int readCount;
 	private int recommend;
-	
-	
+
 	public int getReadCount() {
 		return readCount;
 	}

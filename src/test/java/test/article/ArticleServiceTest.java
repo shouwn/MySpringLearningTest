@@ -1,5 +1,8 @@
 package test.article;
 
+import static article.service.RegularArticleLevelUpgradePolicy.MIN_DURATION_FOR_COMMON;
+import static article.service.RegularArticleLevelUpgradePolicy.MIN_RECOMMEND_FOR_POPULAR;
+
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -34,11 +37,17 @@ public class ArticleServiceTest {
 	@BeforeEach
 	public void setUp() {
 		articles = Arrays.asList(
-				TestObject.makeArticleTestObject(250, Level.NEW, 50, 0, Timestamp.valueOf(LocalDateTime.now().minusDays(6))),
-				TestObject.makeArticleTestObject(251, Level.NEW, 50, 0, Timestamp.valueOf(LocalDateTime.now().minusDays(7))),
-				TestObject.makeArticleTestObject(252, Level.COMMON, 50, 29),
-				TestObject.makeArticleTestObject(253, Level.COMMON, 50, 30),
-				TestObject.makeArticleTestObject(254, Level.POPULAR, 100, 100)
+				TestObject.makeArticleTestObject(
+						250, Level.NEW, 50, 0, 
+						Timestamp.valueOf(LocalDateTime.now().minus(MIN_DURATION_FOR_COMMON.minusDays(1)))
+				),
+				TestObject.makeArticleTestObject(
+						251, Level.NEW, 50, 0,
+						Timestamp.valueOf(LocalDateTime.now().minus(MIN_DURATION_FOR_COMMON))
+				),
+				TestObject.makeArticleTestObject(252, Level.COMMON, 50, MIN_RECOMMEND_FOR_POPULAR - 1),
+				TestObject.makeArticleTestObject(253, Level.COMMON, 50, MIN_RECOMMEND_FOR_POPULAR),
+				TestObject.makeArticleTestObject(254, Level.POPULAR, 100, Integer.MAX_VALUE)
 				);
 	}
 
