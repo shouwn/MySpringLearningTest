@@ -7,7 +7,6 @@
 	
 	<bean id="articleService" class="article.service.ArticleService" >
 		<property name="articleDAO" ref="articleDAO" />
-		<property name="levelUpgrader" ref="regularArticleLevelUpgradePolicy" />
 	</bean>
 	
 	<bean id="articleDAO" class="article.DAO.ArticleDAOJDBC">

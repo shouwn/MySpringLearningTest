@@ -1,7 +1,7 @@
 package test.article;
 
-import static article.service.RegularArticleLevelUpgradePolicy.MIN_DURATION_FOR_COMMON;
-import static article.service.RegularArticleLevelUpgradePolicy.MIN_RECOMMEND_FOR_POPULAR;
+import static article.service.ArticleService.MIN_DURATION_FOR_COMMON;
+import static article.service.ArticleService.MIN_RECOMMEND_FOR_POPULAR;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
