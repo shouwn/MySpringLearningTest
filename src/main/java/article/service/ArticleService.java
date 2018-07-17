@@ -17,10 +17,10 @@ public class ArticleService {
 
 	public static final Duration MIN_DURATION_FOR_COMMON = Duration.ofDays(7);
 	public static final int MIN_RECOMMEND_FOR_POPULAR = 30;
-	
+
 	private ArticleDAO articleDAO;
 	private PlatformTransactionManager transactionManager;
-	
+
 	public void setTransactionManager(PlatformTransactionManager transactionManager) {
 		this.transactionManager = transactionManager;
 	}
@@ -30,10 +30,10 @@ public class ArticleService {
 	}
 
 	public void upgradeLevels() throws Exception{
-		
+
 		TransactionStatus status = 
 				this.transactionManager.getTransaction(new DefaultTransactionDefinition());
-		
+
 		try {
 
 			List<Article> articles = articleDAO.findAll(1, 100, "1", "", "1"); // 완벽하게 하려면 수정 필요
@@ -48,8 +48,8 @@ public class ArticleService {
 			this.transactionManager.rollback(status);
 			throw e;
 		} 
-		
-			/*
+
+		/*
 			Boolean changed = null;
 			if(article.getLevel() == Level.NEW
 					&& Duration.between(
@@ -67,31 +67,39 @@ public class ArticleService {
 			else changed = false;
 
 			if(changed) articleDAO.update(article);
-			 */
+		 */
 	}
-	
+
 	protected void upgradeLevel(Article article) {
 		article.upgradeLevel();
 		articleDAO.update(article);
+		sendUpgradeEMail(article);
+	}
+
+	private void sendUpgradeEMail(Article article) {
+		JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+		mailSender.setHost("mail.server.com");
+		
+		SimpleMailMessage mailMessage = new SimpleMailMessage();
 	}
 
 	private boolean canUpgradeLevel(Article article) {
 		Level currentLevel = article.getLevel();
 
 		switch(currentLevel) {
-		
+
 		case NEW: 
 			return (Duration.between(
-						article.getWriteTime().toInstant()
-							.atZone(ZoneId.systemDefault())
-							.toLocalDateTime(), LocalDateTime.now()
-						).compareTo(MIN_DURATION_FOR_COMMON) >= 0
+					article.getWriteTime().toInstant()
+					.atZone(ZoneId.systemDefault())
+					.toLocalDateTime(), LocalDateTime.now()
+					).compareTo(MIN_DURATION_FOR_COMMON) >= 0
 					);
-			
+
 		case COMMON: return (article.getRecommend() >= MIN_RECOMMEND_FOR_POPULAR);
-		
+
 		case POPULAR: return false;
-		
+
 		default: throw new IllegalArgumentException("Unknown Level: " +
 				currentLevel);
 		}
