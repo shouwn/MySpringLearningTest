@@ -1,7 +1,7 @@
 package test.article;
 
-import static article.service.ArticleService.MIN_DURATION_FOR_COMMON;
-import static article.service.ArticleService.MIN_RECOMMEND_FOR_POPULAR;
+import static article.service.ArticleServiceImpl.MIN_DURATION_FOR_COMMON;
+import static article.service.ArticleServiceImpl.MIN_RECOMMEND_FOR_POPULAR;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailSender;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -22,12 +23,15 @@ import article.Level;
 import article.DAO.ArticleDAO;
 import article.dto.Article;
 import article.service.ArticleService;
+import article.service.ArticleServiceImpl;
+import article.service.ArticleServiceTx;
+import article.service.MockMailSender;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration("/testApplicationContext.xml")
 public class ArticleServiceTest {
 	
-	static class TestArticleService extends ArticleService{
+	static class TestArticleService extends ArticleServiceImpl{
 		private int id;
 
 		public TestArticleService(int id) {
@@ -45,6 +49,7 @@ public class ArticleServiceTest {
 	}
 	
 	@Autowired ArticleService articleService;
+	@Autowired ArticleServiceImpl articleServiceImpl;
 	@Autowired ArticleDAO articleDAO;
 	@Autowired PlatformTransactionManager transactionManager;
 	@Autowired MailSender mailSender;
@@ -75,10 +80,13 @@ public class ArticleServiceTest {
 	
 	@Test
 	public void upgradeAllOrNothing() throws Exception {
-		ArticleService testArticleService = new TestArticleService(articles.get(3).getId());
+		ArticleServiceImpl testArticleService = new TestArticleService(articles.get(3).getId());
 		testArticleService.setArticleDAO(this.articleDAO);
-		testArticleService.setTransactionManager(transactionManager);
 		testArticleService.setMailSender(mailSender);
+		
+		ArticleServiceTx txArticleService = new ArticleServiceTx();
+		txArticleService.setTransactionManager(transactionManager);
+		txArticleService.setArticleService(testArticleService);
 
 		// delete for test
 		for(Article article : articles)
@@ -89,7 +97,7 @@ public class ArticleServiceTest {
 			articleDAO.insertIncludeId(article);
 		
 		try {
-			testArticleService.upgradeLevels();
+			txArticleService.upgradeLevels();
 			Assertions.fail("TestUserServiceException expected");
 		}
 		catch(TestArticleServiceException e) {
@@ -100,6 +108,7 @@ public class ArticleServiceTest {
 	}
 
 	@Test
+	@DirtiesContext
 	public void upgradeLevels() throws Exception {
 		// delete for test
 		for(Article article : articles)
@@ -108,6 +117,9 @@ public class ArticleServiceTest {
 		// insert for test
 		for(Article article : articles)
 			articleDAO.insertIncludeId(article);
+		
+		MockMailSender mockMailSender = new MockMailSender();
+		articleServiceImpl.setMailSender(mockMailSender);
 
 		articleService.upgradeLevels();
 
@@ -116,7 +128,9 @@ public class ArticleServiceTest {
 		checkLevelUpgraded(articles.get(2), false);
 		checkLevelUpgraded(articles.get(3), true);
 		checkLevelUpgraded(articles.get(4), false);
-
+		
+		List<String> request = mockMailSender.getRequests();
+		Assertions.assertEquals(2, request.size());
 	}
 
 	@Test

@@ -5,30 +5,44 @@
 	
 	<bean id="testDataSource" class="article.TestDataSource" />
 	
-	<bean id="articleService" class="article.service.ArticleService">
-		<property name="articleDAO" ref="articleDAO" />
+	<bean id="articleService"
+		class="article.service.ArticleServiceTx">
+		
 		<property name="transactionManager" ref="transactionManager" />
-		<property name="mailSender" ref="mailSender"></property>
+		
+		
+		
+		<property name="articleService" ref="articleServiceImpl"></property>
 	</bean>
 
+	<bean id="articleServiceImpl"
+		class="article.service.ArticleServiceImpl">
+		<property name="articleDAO" ref="articleDAO"></property>
+		<property name="mailSender" ref="mailSender"></property>
+	</bean>
 	<bean id="articleDAO" class="article.DAO.ArticleDAOJDBC">
 		<property name="dataSource" ref="testDataSource" />
 	</bean>
+	
 	
 	<bean id="jdbcContext" class="article.JdbcContext">
 		<property name="dataSource" ref="testDataSource" />
 	</bean>
 	
+	
 	<bean id="regularArticleLevelUpgradePolicy" class="article.service.RegularArticleLevelUpgradePolicy">
 		<property name="articleDAO" ref="articleDAO" />
 	</bean>
 
+	
 	<bean id="transactionManager"
 		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
 		<property name="dataSource" ref="testDataSource"></property>
 	</bean>
 	
+	
 	<bean id="mailSender" class="article.service.DummyMailSender">
 		
 	</bean>
+	
 </beans>
