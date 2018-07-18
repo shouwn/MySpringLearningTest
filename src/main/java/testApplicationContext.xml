@@ -5,11 +5,12 @@
 	
 	<bean id="testDataSource" class="article.TestDataSource" />
 	
-	<bean id="articleService" class="article.service.ArticleService" >
+	<bean id="articleService" class="article.service.ArticleService">
 		<property name="articleDAO" ref="articleDAO" />
 		<property name="transactionManager" ref="transactionManager" />
+		<property name="mailSender" ref="mailSender"></property>
 	</bean>
-	
+
 	<bean id="articleDAO" class="article.DAO.ArticleDAOJDBC">
 		<property name="dataSource" ref="testDataSource" />
 	</bean>
@@ -27,4 +28,7 @@
 		<property name="dataSource" ref="testDataSource"></property>
 	</bean>
 	
+	<bean id="mailSender" class="article.service.DummyMailSender">
+		
+	</bean>
 </beans>

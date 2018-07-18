@@ -13,6 +13,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.MailSender;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -46,6 +47,7 @@ public class ArticleServiceTest {
 	@Autowired ArticleService articleService;
 	@Autowired ArticleDAO articleDAO;
 	@Autowired PlatformTransactionManager transactionManager;
+	@Autowired MailSender mailSender;
 
 	List<Article> articles;
 
@@ -76,6 +78,7 @@ public class ArticleServiceTest {
 		ArticleService testArticleService = new TestArticleService(articles.get(3).getId());
 		testArticleService.setArticleDAO(this.articleDAO);
 		testArticleService.setTransactionManager(transactionManager);
+		testArticleService.setMailSender(mailSender);
 
 		// delete for test
 		for(Article article : articles)

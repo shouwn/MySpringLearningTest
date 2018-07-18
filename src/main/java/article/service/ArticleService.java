@@ -5,6 +5,8 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
 
+import org.springframework.mail.MailSender;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
@@ -20,6 +22,7 @@ public class ArticleService {
 
 	private ArticleDAO articleDAO;
 	private PlatformTransactionManager transactionManager;
+	private MailSender mailSender;
 
 	public void setTransactionManager(PlatformTransactionManager transactionManager) {
 		this.transactionManager = transactionManager;
@@ -27,6 +30,10 @@ public class ArticleService {
 
 	public void setArticleDAO(ArticleDAO articleDAO) {
 		this.articleDAO = articleDAO;
+	}
+	
+	public void setMailSender(MailSender mailSender) {
+		this.mailSender = mailSender;
 	}
 
 	public void upgradeLevels() throws Exception{
@@ -77,10 +84,13 @@ public class ArticleService {
 	}
 
 	private void sendUpgradeEMail(Article article) {
-		JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
-		mailSender.setHost("mail.server.com");
-		
 		SimpleMailMessage mailMessage = new SimpleMailMessage();
+		mailMessage.setTo("sjonghyon@gmail.com");
+		mailMessage.setFrom("sjonghyon@gmail.com");
+		mailMessage.setSubject("Upgrade 안내");
+		mailMessage.setText("게시글 등급이 " + article.getLevel().name());
+		
+		this.mailSender.send(mailMessage);
 	}
 
 	private boolean canUpgradeLevel(Article article) {
